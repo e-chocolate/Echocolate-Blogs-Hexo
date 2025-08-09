@@ -11,7 +11,7 @@
 
   <head>
     <title>
-      记录美好之物 [ Yuki博客 ]
+      基于 Hexo 搭建博客 [ Yuki博客 ]
     </title>
   <meta name="generator" content="Hexo 7.3.0"></head>
 
@@ -78,74 +78,39 @@
 
         <div id="content-outer">
           <div class="content-inner">
-            <link rel="stylesheet" href="/css/index.css">
-<div class="paginator">
-  <div class="content">
-    <div class="contain-box1">
-
-      <div class="hd logodiv">
-        <img src="https://avatars.githubusercontent.com/u/41510511?v=4" class="logopng" alt="logo">
-          <p class="logot">
-            Yuki博客
-              <span class="logo_2"></span>
-              <h3 class="words" style="font-weight: bold;font-family: Georgia;">
-                记录美好之物
-              </h3>
-          </p>
-      </div>
-      <link rel="stylesheet" href="/css/nav.css">
-<div class="hd">
-  <ol class="breadcrumb">
-    
-      <li><a class="ba" target="_blank" rel="noopener" href="https://echocolate.xyz/">
-          关于我👀
-        </a></li>
-      
-      <li><a class="ba" target="_blank" rel="noopener" href="https://github.com/e-chocolate">
-          GitHub🧨
-        </a></li>
-      
-  </ol>
-  <hr>
-</div>
-
-    </div>
-    <div class="contain-box2">
-      <link rel="stylesheet" href="/css/index-post.css">
-
-  <div class="recent-posts">
-    <p class="p1">文章列表</p>
-    <div class="recent-post-item">
-      <ul class="notice-list" id="notice-1">
-        
-          <li>
-            <a href="/2021/02/01/3/">
-              时间轴
-            </a>
-            <p class="notice-time" datetime="2021-02-01T02:00:00.000Z">
-              2021-02-01
-            </p>
-          </li>
-          
-          <li>
-            <a href="/2021/02/01/4/">
-              整点薯条
-            </a>
-            <p class="notice-time" datetime="2021-02-01T02:00:00.000Z">
-              2021-02-01
-            </p>
-          </li>
-          
-      </ul>
-      <div class="list-bottom">
-        <a class="extend prev" rel="prev" href="/page/3/">Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
-      </div>
-    </div>
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      基于 Hexo 搭建博客
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <h1 id="Hexo-介绍"><a href="#Hexo-介绍" class="headerlink" title="Hexo 介绍"></a>Hexo 介绍</h1><p><a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>是一个博客框架，可以快速地将 Markdown 文件生成静态网页。</p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>整体步骤为：</p>
+<ol>
+<li>全局安装<code>npm install -g hexo-cli</code>，这一步可以参考<a target="_blank" rel="noopener" href="http://hexo.io/docs/index.html#Install-Hexo">安装指南</a></li>
+<li>使用 hexo 生成项目 <code>hexo init &lt;folder&gt;</code>，这一步可以参考<a target="_blank" rel="noopener" href="https://hexo.io/docs/setup">建站指南</a></li>
+<li>修改配置文件，这一步可以参考<a target="_blank" rel="noopener" href="https://hexo.io/docs/setup">配置指南</a></li>
+</ol>
+<h1 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h1><p>以<code>markdown</code>写作为例，Hexo会将上一步设置的<code>source_dir</code>文件夹下面的所有 markdown 文件转换为静态网页。</p>
+<p>写作完成后，可以使用<code>npx hexo generate</code>生成静态文件或者使用<code>npx hexo server</code>运行后端服务。</p>
+<h1 id="主题使用"><a href="#主题使用" class="headerlink" title="主题使用"></a>主题使用</h1><p>如果有想使用的主题，只需要将主题下载到<code>themes</code>文件夹内就可以，同时需要修改配置文件的<code>theme</code>属性</p>
+<h1 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h1><p>Github Pages 自动发布的思路：</p>
+<ol>
+<li>设定一个工作流：监控到<code>main</code>分支有提交就触发该工作流</li>
+<li>工作流中先<code>build</code>该项目，然后将生成的静态文件推送到<code>gh-pages</code>分支</li>
+<li>将<code>gh-pages</code>分支上的内容发布到 GitHub Pages</li>
+</ol>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/e-chocolate/Echocolate-Blogs-Hexo">Yuki博客</a></li>
+</ul>
 
   </div>
   
-    </div>
-  </div>
 </div>
           </div>
         </div>
