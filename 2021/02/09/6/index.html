@@ -1,0 +1,125 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      白话DNS工作原理 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      白话DNS工作原理
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　今天又是被v2ray折腾而难受的一天，昨天其实就打算将v2ray的流量混淆给搞定的，结果查阅v2ray的官方文档，大抵知道了“HTTP&#x2F;2+TLS+WEB”这种流量混淆模式，“HTTP&#x2F;2+TLS+WEB”这种混淆模式就在于将通过v2ray转发的流量经过服务器内的转发变成了https流量，这样外界就无法解密这种流量信息的内容具体是什么，从外界表现看，这种流量信息与访问”<a target="_blank" rel="noopener" href="https://www.baidu.com"完全相同,所以“http/2+TLS+WEB%E2%80%9D%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%E5%8F%AF%E8%B0%93%E6%98%AF%E7%9B%AE%E5%89%8D%E6%9C%80%E5%AE%8C%E7%BE%8E%E7%9A%84%E6%96%B9%E5%BC%8F%EF%BC%8C%E6%98%A8%E6%99%9A%E6%88%91%E7%9A%84%E8%BF%9B%E5%BA%A6%E5%B0%B1%E5%88%B0%E4%BA%86%E7%9F%A5%E9%81%93%E4%BA%86%E8%BF%99%E7%A7%8D%E6%96%B9%E5%BC%8F%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%EF%BC%8C%E5%9C%A8%E8%84%91%E8%A2%8B%E4%B8%AD%E5%A4%A7%E6%A6%82%E5%8B%BE%E5%8B%92%E4%BA%86%E4%B8%80%E4%B8%8B%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%BF%99%E7%A7%8D%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F%EF%BC%8C%E7%84%B6%E5%90%8E%E8%A7%89%E5%BE%97%E5%B7%AE%E4%B8%8D%E5%A4%9A%E4%BA%86%EF%BC%8C%E5%B0%B1%E5%8E%BB%E7%9C%8B%E4%BA%86%E4%B8%80%E7%9C%BC%E6%B8%B8%E6%88%8F%E8%AE%BA%E5%9D%9B%EF%BC%8C%E7%9C%8B%E5%88%B0%E4%B8%80%E4%BD%8D%E5%B0%8F%E4%BC%99%E4%BC%B4%E5%8F%91%E9%80%9A%E5%85%B3%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F%E3%80%8A%E9%9A%90%E5%BD%A2%E5%AE%88%E6%8A%A4%E8%80%85%E3%80%8B%E7%9A%84%E6%B8%B8%E6%88%8F%E6%84%9F%E6%82%9F%EF%BC%8C%E7%9C%8B%E4%BA%86%E8%BF%99%E7%AF%87%E5%B8%96%E5%AD%90%EF%BC%8C%E6%88%91%E6%B1%B2%E5%8F%96%E5%88%B0%E4%BA%86%E5%BE%88%E5%A4%9A%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E4%BF%A1%E6%81%AF%EF%BC%8C%E7%9F%A5%E9%81%93%E4%BA%86%E3%80%8A%E9%9A%90%E5%BD%A2%E5%AE%88%E6%8A%A4%E8%80%85%E3%80%8B%E4%B8%AD%E7%9A%84%E2%80%9C%E6%AD%A6%E8%97%A4%E7%BA%AF%E5%AD%90%E2%80%9D%E7%9A%84%E6%89%AE%E6%BC%94%E8%80%85%E5%B1%85%E7%84%B6%E5%9C%A8B%E7%AB%99%E6%9C%89%E8%B4%A6%E5%8F%B7%EF%BC%8C%E7%BB%93%E6%9E%9C%E4%B8%80%E6%99%9A%E4%B8%8A%E5%B0%B1%E7%9C%8B%E5%B0%8F%E5%A7%90%E5%A7%90%E4%BB%A5%E5%BE%80%E5%8F%91%E7%9A%84%E8%A7%86%E9%A2%91%E4%BA%86%EF%BC%8C%E7%8E%B0%E5%9C%A8%E6%83%B3%E6%83%B3%E6%98%A8%E6%99%9A%E7%9C%9F%E6%98%AF%E6%84%9A%E8%A0%A2(#%EF%BD%80-_%E3%82%9D-)">https://www.baidu.com&quot;完全相同，所以“HTTP/2+TLS+WEB”这种方式可谓是目前最完美的方式，昨晚我的进度就到了知道了这种方式的工作原理，在脑袋中大概勾勒了一下如何实现这种工作方式，然后觉得差不多了，就去看了一眼游戏论坛，看到一位小伙伴发通关国产游戏《隐形守护者》的游戏感悟，看了这篇帖子，我汲取到了很多有意思的信息，知道了《隐形守护者》中的“武藤纯子”的扮演者居然在B站有账号，结果一晚上就看小姐姐以往发的视频了，现在想想昨晚真是愚蠢(#｀-_ゝ-)</a><br>　　嘛，人生就是如此，不要将时间浪费在后悔无法改变的事情上，所以今天痛定思痛，下定决心必须将“HTTP&#x2F;2+TLS+WEB”这种功能实现，这样在以后查找论文、文献的时候更加方便。在此之前，先简单阐述一下通过浏览器汲取信息的工作原理(下面内容大佬可以直接跳过)，当我们通过浏览器访问“<a href="http://www.baidu.com”的时候，大抵会经过如下步骤：我们通过浏览器向外界发送我们需要通过域名访问“www.baidu.com"的服务器这样的一种请求，但是单单靠域名无法获取到“www.baidu.com”无法获取到百度真实的IP位置，即通过域名无法访问到真正的百度服务器内的资源，这时候DNS服务商就出现了，可以认为DNS服务商是将域名和真实IP一一对应的一个映射，所以当通过域名“www.baidu.com”访问百度的时候，DNS服务商先将请求信息转发到“www.baidu.com”所在的真实服务器上面">www.baidu.com”的时候，大抵会经过如下步骤：我们通过浏览器向外界发送我们需要通过域名访问“www.baidu.com&quot;的服务器这样的一种请求，但是单单靠域名无法获取到“www.baidu.com”无法获取到百度真实的IP位置，即通过域名无法访问到真正的百度服务器内的资源，这时候DNS服务商就出现了，可以认为DNS服务商是将域名和真实IP一一对应的一个映射，所以当通过域名“www.baidu.com”访问百度的时候，DNS服务商先将请求信息转发到“www.baidu.com”所在的真实服务器上面</a>(用Windows系统的小伙伴可以通过如下方式知道“<a href="http://www.baidu.com”的IP位置：按下“Windows+R”组合键，输入cmd，进入命令行，输入ping">www.baidu.com”的IP位置：按下“Windows+R”组合键，输入cmd，进入命令行，输入ping</a> “<a target="_blank" rel="noopener" href="http://www.baidu.com",这时候会显示类似如下信息“来自/">www.baidu.com&quot;，这时候会显示类似如下信息“来自</a> 180.101.49.12 的回复: 字节&#x3D;32 时间&#x3D;20ms TTL&#x3D;54 ”，这时候在浏览器输入“180.101.49.12”回车就会发现有意思的东西哈)，浏览器属于客户端，相当于网购中的买家，在网络中发送请求，DNS服务器相对于电商平台，将我们这个请求（买家）对应到与该请求相对应的真实服务器（卖家）上面，服务器相对于卖家仓库，收到了电商平台转发的买家需求，就在仓库（真实服务器）内寻找卖家需要的相关资源并安排将找到的信息返还给浏览器。这就是一般而言通过浏览器访问资源的一般流程。这里其实不同的DNS服务商提供的服务也不一样，但没有必要展开来讲。<br>　　刚刚的那段描述其实没有说到“卖家仓库”为何会准确收到买家信息并正确响应请求的，其实买家与卖家之间一共有65536条道路（即端口号一定在0 到65535之间），我们通过浏览器访问“卖家仓库”，一般只走80和443这两条专属线路，80对应http协议，443对应https协议，这两条道路是“买家与卖家”之间的专线，不过443更安全，所以现在的大多数域名都支持并且推荐通过https访问，就是因为https流量无法被解密（443更安全）。当服务器（卖家）收到一个请求访问该服务器内相关资源相关（买家）请求的时候，如何正确响应买家的相关请求呢？这就需要Web服务器程序啦（卖家仓库的管理人员），这些Web服务器程序（如nginx、apache、caddy等）专门在仓库门口观察80和443这两条“道路”，看看这两条道路上是否有要从仓库中订货的订单（买家请求），当看到这两条道路上有订单请求的时候，就先从Web服务器程序配置文件（仓库自身的订单记录）上看，发现我们允许浏览器（买家）请求从物理服务器（仓库）中提货，即服务器端允许将浏览器请求的资源发送给浏览器，至此一次通过浏览器在网络中搜索信息的请求就完成啦。<br>　　说的更通俗一点，浏览器是A，服务器B是A的亲戚，A某一天要去B探亲，如果A知道B的IP地址的话，那么A就可以直接从家出发走向B的IP地址，但是如果A不知道B的IP地址只知道B的名字的话，就需要向交警叔叔（DNS服务器）询问B家怎么走，这时候交警就会查阅相关的记录，告诉你B家怎么走。并且从A到B一共有65536条路，但是A和B之间来往一般只走80(http)和443(https)这两条线路，因为这两条路走的人多呀，而且443这条路还有证书颁发机构保证安全与私密性，当你从443这条路上探望B的时候，别人只知道，你从443这条路出发了，并不知道你带了些什么给B（某些道路具有特定的功能，比如22这条路一般是走ssh协议的，25端口一般是走邮件传输协议的；并且某些情况下A和B会商定我们之间就走xxxxx这个端口的路，这就出现了某些网址需要这样才能访问<a href="http://www.example.com:8848）。">www.example.com:8848）。</a><br>　　好了，接下来回到“HTTP&#x2F;2+TLS+WEB”这个方式，由于某些原因，买家访问某些卖家的时候道路被一堵墙拦住了，这时候就需要一台VPS来帮忙了，VPS具有这样的功能，买家能够访问它，它能够访问卖家，这样就相当于买家与卖家之间的中转，让买家与卖家之间的交流能够顺利进行。但是VPS做中转的时候，即买家访问VPS的时候，这个流量信息一般无外乎常见的几种协议，这些协议要么就是容易被那堵神秘的墙抽查并且查到你们之间在聊什么，要么就是流量信息的表现太具混淆性，混淆地有点不正常。其实这里的中转VPS也是一个卖家，不过它与买家之间的沟通容易引起注意。不过“HTTP&#x2F;2+TLS+WEB”可以将中转VPS与买家之间的沟通加密成443道路上的信息，这时候那堵神秘的墙就是认为买家与中转VPS之间是正常交流，即使神秘的墙某天想查一查买家与中转VPS之间每天都在说些什么悄悄话的时候，证书颁发机构的存在让这种悄悄话无法被解读。<br>　　好了，回归正题，今天上午其实就是想实现这种功能，不过我的服务器（仓库）有两个管理人员——nginx和apache，nginx是主要管理人员，apache是次要的，但是一条道路只能有一条管理人员看管，所以我的80和443这两条道路都由nginx来看管，但是nginx的一个问题就是它无法将HTTP&#x2F;2的信息进行转发，这样买家和卖家之间就无法利用证书颁发机构来加密通话了啊！<br>　　综上：HTTP&#x2F;2+TLS+WEB是一种目前最完美的绕过墙的方案，但是这套方案需要你的Web服务器采用apache或者caddy。今晚喝了5两白酒，回家已经快十点了，先这样，明天抽个时间采用“WebSocket + TLS + Web”这套方案。</p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

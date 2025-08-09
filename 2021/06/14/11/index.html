@@ -1,0 +1,139 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      Nginx反代导致的文件下载问题 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      Nginx反代导致的文件下载问题
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　最近把自己的搭建的私人网盘从NextCloud换成了Zfile，感觉NextCloud还是太臃肿了，更多的是面向团队或者企业开发的，之后也陆陆续续的换了其他的网盘程序，包括可道云、Seafile等等，最终决定使用Zfile作为我的网盘程序，关于这几种网盘的使用感受可以查看<a target="_blank" rel="noopener" href="https://blogs.echocolate.xyz/archives/12/">私人云盘使用感受</a>。<br>　　个人使用Zfile的原因是我只需要网盘资源的上传和下载功能即可，偏向于资源的存储和下载，而不是同步，感觉Zfile功能简洁，符合我的要求。使用Zfile也有一段时间了，使用体验也很好。<br>　　不过今天遇到了问题——下载大文件到达1G之后浏览器端立即报错“网络错误”，然后就无法下载了。<br>　　下面是我的排查思路：</p>
+<ol>
+<li><code>v2ray</code>问题，一开始以为是服务端v2ray的缓存限制带来的问题，后来发现裸连，问题依旧存在</li>
+<li>服务器内存太小了，于是在下载的时候<code>watch</code>服务器内存变化，发现内存依旧有很多可用</li>
+<li><code>jvm</code>设置的问题，由于是自用，设置了JVM的最大内存空间为512M，后来发现即使不设置限制，问题依旧存在</li>
+</ol>
+<p>　　最后还是通过万能的Google发现了问题所在——<strong>Nginx的缓冲区设置</strong>，Nginx下有一个默认参数<code>proxy_max_temp_file_size 1024m;</code>，这个参数可以理解为，当Nginx要传输的数据大于默认的buffer大小时，就会把剩余的部分写入到磁盘临时文件，<code>proxy_max_temp_file_size</code>参数就代表着磁盘文件的大小。当我下载大文件的时候，后端程序传给Nginx的数据很快，但客户端这边下载速度远不及后端发送的数据，就会导致后端阻塞超时，进而出现报错导致文件无法继续下载。<br>　　解决方案有两个：</p>
+<ol>
+<li>增大<code>proxy_max_temp_file_size</code>，<strong>尽量让磁盘缓存文件不溢出</strong>，不过这个在传输时会占用一定的磁盘空间</li>
+<li>减小<code>proxy_max_temp_file_size</code>，<strong>尽量让服务端的发送速度与客户端的接收速度相匹配</strong></li>
+</ol>
+<p>　　我的处理方式是将该值调小，毕竟服务器磁盘空间有限，下面是我的 nginx 部分配置</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for<span class="comment">;</span></span><br><span class="line">    proxy_set_header Host $http_host<span class="comment">;</span></span><br><span class="line">    proxy_redirect off<span class="comment">;</span></span><br><span class="line">    proxy_pass http://127.0.0.1:xxxxx<span class="comment">;</span></span><br><span class="line">    <span class="comment"># 本地存储策略</span></span><br><span class="line">    client_max_body_size 200m<span class="comment">;</span></span><br><span class="line">    <span class="comment"># 硬盘缓冲区大小</span></span><br><span class="line">    proxy_max_temp_file_size 10M<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://ms2008.github.io/2021/04/08/nginx-buffer/">Nginx Buffer 机制引发的下载故障</a><br><a target="_blank" rel="noopener" href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">Module ngx_http_proxy_module</a></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

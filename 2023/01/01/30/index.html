@@ -1,0 +1,149 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      Git同步两个远程仓库 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      Git同步两个远程仓库
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　有时候为了保证项目代码的安全，会将本地项目都在不同的Git平台都有备份，具体操作如下：</p>
+<ol>
+<li>查看当前本地项目已经关联的远程仓库</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git remote -v</span></span><br><span class="line">origin	git@github.com:opendvd/dual_push.git (fetch)</span><br><span class="line">origin	git@github.com:opendvd/dual_push.git (push)</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>为当前项目新关联另一个远程仓库，要注意新关联的<code>name</code>不能与已经有的相同</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">git remote add &lt;name&gt; &lt;git-url&gt;</span></span><br><span class="line">git remote add gitlab_origin git@gitlab.com:opendvd/dual_push.git</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>再次查看本地项目的已经关联的数据库</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git remote -v</span></span><br><span class="line">gitlab_origin	git@gitlab.com:opendvd/dual_push.git (fetch)</span><br><span class="line">gitlab_origin	git@gitlab.com:opendvd/dual_push.git (push)</span><br><span class="line">origin	git@github.com:opendvd/dual_push.git (fetch)</span><br><span class="line">origin	git@github.com:opendvd/dual_push.git (push)</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>针对不同的远程库执行推送<br>git push [-u] gitlab_origin main<br>git push [-u] origin main</li>
+</ol>
+<blockquote>
+<p>参考文献：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/L_Y_Fei/article/details/108406927">两种方式——Git同步多个远程仓库</a></li>
+</ul>
+</blockquote>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

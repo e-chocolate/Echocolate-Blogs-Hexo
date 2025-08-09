@@ -1,0 +1,129 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      实现V2ray流量统计 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      实现V2ray流量统计
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　最近将自己搭建的v2ray服务借给朋友使用，同时也正在考虑将v2ray服务租给有需要的人使用，毕竟每个月的服务器费用也是个不小的花费。考虑到VPS每个月有流量限制，之前自己一个人使用基本上是用不完的，但是一旦借给的人多了，就担心流量超标的问题，因此不得不对每一个用户进行流量统计。<br>　　好在v2ray的官方文档以及白话文手册都有介绍如何进行流量统计，实现起来也不是很难，简单记录一下。<br>　　v2ray的配置具体见官方文档，此处不在赘述，主要讲一下如何利用v2ray提供的工具进行流量的查询与统计。<br>　　查询所有流量信息<code>v2ctl api --server=127.0.0.1:49988 StatsService.QueryStats &#39;pattern: &quot;&quot; reset: false&#39;</code>，<code>reset: false</code>表示查询时不重置流量。<br>　　查询结果如下：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;inbound&gt;&gt;&gt;api&gt;&gt;&gt;traffic&gt;&gt;&gt;uplink&quot;</span><br><span class="line">  value: 616</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;inbound&gt;&gt;&gt;api&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;</span><br><span class="line">  value: 1423</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;outbound&gt;&gt;&gt;traffic_out&gt;&gt;&gt;traffic&gt;&gt;&gt;uplink&quot;</span><br><span class="line">  value: 18438</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;outbound&gt;&gt;&gt;traffic_out&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;</span><br><span class="line">  value: 10526741</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;user&gt;&gt;&gt;Yuki&gt;&gt;&gt;traffic&gt;&gt;&gt;uplink&quot;</span><br><span class="line">  value: 18438</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;user&gt;&gt;&gt;Yuki&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;</span><br><span class="line">  value: 10526741</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;inbound&gt;&gt;&gt;traffic_in&gt;&gt;&gt;traffic&gt;&gt;&gt;uplink&quot;</span><br><span class="line">  value: 21898</span><br><span class="line">&gt;</span><br><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;inbound&gt;&gt;&gt;traffic_in&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;</span><br><span class="line">  value: 10824585</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>　　也可以查询某一个用户的上行或者下行的流量<code>v2ctl api --server=127.0.0.1:49988 StatsService.GetStats &#39;name:&quot;user&gt;&gt;&gt;Yuki&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;&#39;</code></p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stat: &lt;</span><br><span class="line">  name: &quot;user&gt;&gt;&gt;Yuki&gt;&gt;&gt;traffic&gt;&gt;&gt;downlink&quot;</span><br><span class="line">  value: 6277</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>　　可见v2ray官方就帮我们进行了流量统计，我们可以借用awk工具处理官方统计结果。</p>
+<div class="reply2view" style="font-weight:bolder; color:#336699;">您需要<a id="comment_show" href="#comments">回复</a>才能显示此处隐藏内容。</div>
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

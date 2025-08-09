@@ -1,0 +1,132 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      4种私人云盘使用感受 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      4种私人云盘使用感受
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　最近把自己的搭建的私人网盘从Nextcloud换成了Zfile，感觉Nextcloud还是太臃肿了，更多的是面向团队或者企业开发的，之后也陆陆续续的换了其他的网盘程序，包括可道云、Seafile等等，最终决定使用Zfile作为我的网盘程序，下面就来总结一下这几种网盘程序给我的使用感受。  </p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://nextcloud.com/"><em>Nextcloud</em></a>使用感受：我使用的第一个网盘程序，功能丰富，完全开源，同时在WIndows，Android等平台上都有相应的客户端，同步文件也方便；大文件下载也没有问题；多用户的权限设置也处理的很好；最重要的是其<strong>社区商店中有好多精品应用</strong>可以扩展我们的功能。但随着网盘的Nextcloud的版本不断更新，感觉其越来越臃肿，很多功能其实我不需要。</li>
+<li><a target="_blank" rel="noopener" href="https://kodcloud.com/"><em>可道云</em></a>使用感受：操作方便，整体UI与Windows风格很相似，同时插件也很多（有一些需要付费），支持预览的格式非常丰富；值得一提的是，<strong>可道云是我使用过的网盘程序中，预览渲染markdown格式文件最好的</strong>。但是个人版只支持创建10个用户，以及其它一些限制，其实对个人用户影响不是很大。</li>
+<li><a target="_blank" rel="noopener" href="https://www.seafile.com/"><em>Seafile</em></a>使用感受：Seafile感觉侧重于同步，或者说<strong>同步的体验感是最好的</strong>。需要注意的是Seafile会对服务器端的文件进行分片存储，不能通过正常的目录结构读取文件。</li>
+<li><a target="_blank" rel="noopener" href="https://www.zfile.vip/"><em>Zfile</em></a>使用感受：界面简洁；功能简洁，更多的偏向于云数据的<strong>存储与管理</strong>而不是同步。大文件下载支持也很好（需要注意使用nginx反代的话需要进行Buffer的设置）。</li>
+</ol>
+<p>　　还有一点需要说明的是，Zfile是不将你的本地文件信息存储在数据中的，当你在服务器端删除程序之后，Zfile立即就会知道；而Nextcloud或者可道云会将你的本地文件信息存储在数据库中，当你在服务器端删除某一个程序，可能不会立刻发现，有时候需要自己更新数据库。<br>　　最后一句话总结：<strong>适合自己的才是最好的！</strong></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

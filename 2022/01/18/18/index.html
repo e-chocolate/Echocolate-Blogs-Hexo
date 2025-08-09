@@ -1,0 +1,151 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      基于ttyd实现Web shell [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      基于ttyd实现Web shell
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　最近遇到了一个小难题——我无法<code>ping</code>到我的服务器了，具体原因就是IP被封禁了，不过域名并没有被封禁，所以基于域名的服务还是可以正常提供，但是我无法登录我的服务器，自然无法进行查看日志等操作。<br>　　简单搜索了一下，发现有以下解决方案：</p>
+<ol>
+<li>发工单给VPS客服，让他们帮忙改IP，不同VPS标准不一样，有的可以免费改，有的需要交钱。</li>
+<li>用另外一台可以<code>ping</code>通的VPS作为跳板。</li>
+</ol>
+<p>　　方案1对我来说有点昂贵，我的VPS提供商每改一次IP需要$3；方案2同理，额外花费了一台服务器的钱。不过好在我的域名没有被封禁，因此我就考虑使用 Web Shell 来解决问题。<br>　　经过翻阅相关帖子之后，最终选择了<a target="_blank" rel="noopener" href="https://tsl0922.github.io/ttyd/">ttyd</a>作为我的 Web Shell 服务提供程序，下面简单记录一下安装过程。当然，首先我租了一台按小时计费的跳板机，等部署完毕之后销毁，能省一点是一点嘛。</p>
+<blockquote>
+<p>注意：使用 Web Shell 首要考虑的事情就是安全！安全！还是™的安全！</p>
+</blockquote>
+<ul>
+<li><p>安装：通过参考官方说明，Linux端可以直接下载二进制包或者源码安装，我选择的是直接下载二进制包安装，通过<code>arch</code>查看Linux版本，然后下载对应的客户端即可。</p>
+</li>
+<li><p>修改权限：解压二进制包，并注意让二进制文件拥有执行权限，否则<code>ttyd</code>无法启动。</p>
+</li>
+<li><p>启动<code>ttyd</code>：<code>/usr/local/ttyd/ttyd -p 19999 -i 127.0.0.1 -c user:password -m 1 bash</code>，这里的参数代表的含义依旧参考官方手册，我使用的是只允许本地通过19999端口进行连接，同时需要输入相应的账号密码进行验证，并且最多只支持1个客户端连接。</p>
+</li>
+<li><p>配置<code>nginx</code>反向代理：这样就可以通过域名进行访问<code>ttyd</code>提供的 Web Shell 服务了。</p>
+</li>
+</ul>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">location</span> <span class="string">/ &#123;</span></span><br><span class="line">    <span class="attr">proxy_pass</span> <span class="string">http://127.0.0.1:49999;</span></span><br><span class="line">    <span class="attr">proxy_http_version</span> <span class="string">1.1;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Upgrade $http_upgrade;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Connection \&quot;upgrade\&quot;;</span></span><br><span class="line">    <span class="attr">proxy_redirect</span> <span class="string">off;</span></span><br><span class="line">    <span class="attr">proxy_read_timeout</span> <span class="string">3600;</span></span><br><span class="line"><span class="attr">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置开机自启动</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=ttyd Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=user</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br><span class="line">ExecStart=/usr/local/ttyd/ttyd -p 19999 -i 127.0.0.1 -c user:password -m 1 bash</span><br><span class="line">WorkingDirectory=/home/user/</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://github.com/tsl0922/ttyd">ttyd</a><br><a target="_blank" rel="noopener" href="https://www.yisu.com/zixun/18523.html">更优于 Shellinabox 的 web shell 工具 – ttyd</a></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

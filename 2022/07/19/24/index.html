@@ -1,0 +1,158 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      基于正则表达式隐藏博客内容 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      基于正则表达式隐藏博客内容
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　目前 Typecho 只支持将整个文章的内容隐藏，很多时候只需要隐藏文章的部分内容，既然官方没有提供这个功能，那就自己实现一下。<br>　　设计思路也很简单：</p>
+<ol>
+<li>设定隐藏标记，在隐藏标记之间的内容被隐藏</li>
+<li>解析文章内容，若当前用户可以访问隐藏内容，则将隐藏标记去掉</li>
+<li>解析文章内容，若当前用户不可以访问隐藏内容，则将隐藏标记去掉同时替换隐藏标记之间的文本</li>
+</ol>
+<p>　　<div class="reply2view" style="font-weight:bolder; color:#336699;">您需要<a id="comment_show" href="#comments">回复</a>才能显示此处隐藏内容。</div><br>　　最终实现效果如下：在写博客时，只需要遵守下面的语法就可以实现<strong>隐藏内容</strong>的效果。</p>
+<blockquote>
+<p>&lsqb;hide&rsqb;<br>该部分内容需回复可见<br>&lsqb;&#x2F;hide&rsqb;<br>&lsqb;login&rsqb;<br>该部分内容仅登录可见<br>&lsqb;&#x2F;login&rsqb;</p>
+</blockquote>
+<p>　　插件的使用方法如下：</p>
+<ol>
+<li>替换<code>post.php</code>中文章内容输出语句</li>
+<li>自定义<strong>登录</strong>点击事件（可选）</li>
+</ol>
+<p>　　首先是替换内容输出语句，在主题文件夹下<code>post.php</code>中找到文章内容输出语句，以<code>default</code>主题为例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;div <span class="class"><span class="keyword">class</span>=&quot;<span class="title">post</span>-<span class="title">content</span>&quot; <span class="title">itemprop</span>=&quot;<span class="title">articleBody</span>&quot;&gt;</span></span><br><span class="line"><span class="class">    &lt;?<span class="title">php</span> <span class="title">parseContnet</span>($<span class="title">this</span>-&gt;<span class="title">content</span>); ?&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>　　我们在<code>div</code>区块间加入文章内容替换语句</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">array_key_exists</span>(<span class="string">&#x27;Hide&#x27;</span>, <span class="title class_">Typecho_Plugin</span>::<span class="title function_ invoke__">export</span>()[<span class="string">&#x27;activated&#x27;</span>])) &#123;</span><br><span class="line">        <span class="variable language_">$this</span>-&gt;content = <span class="title class_">Hide_Plugin</span>::<span class="title function_ invoke__">parse_content</span>(<span class="variable">$this</span>-&gt;content, <span class="variable">$this</span>-&gt;cid, <span class="variable">$this</span>-&gt;<span class="title function_ invoke__">remember</span>(<span class="string">&#x27;mail&#x27;</span>,<span class="literal">true</span>), <span class="variable">$this</span>-&gt;user-&gt;<span class="title function_ invoke__">hasLogin</span>(), <span class="variable">$this</span>-&gt;options-&gt;adminUrl);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>　　最后<code>post.php</code>文件内容如下（仅输出文章内容部分）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;div <span class="class"><span class="keyword">class</span>=&quot;<span class="title">post</span>-<span class="title">content</span>&quot; <span class="title">itemprop</span>=&quot;<span class="title">articleBody</span>&quot;&gt;</span></span><br><span class="line"><span class="class">    &lt;?<span class="title">php</span></span></span><br><span class="line"><span class="class">        <span class="title">if</span> (<span class="title">array_key_exists</span>(&#x27;<span class="title">Hide</span>&#x27;, <span class="title">Typecho_Plugin</span>::<span class="title">export</span>()[&#x27;<span class="title">activated</span>&#x27;])) </span>&#123;</span><br><span class="line">            <span class="variable language_">$this</span>-&gt;content = <span class="title class_">Hide_Plugin</span>::<span class="title function_ invoke__">parse_content</span>(<span class="variable">$this</span>-&gt;content, <span class="variable">$this</span>-&gt;cid, <span class="variable">$this</span>-&gt;<span class="title function_ invoke__">remember</span>(<span class="string">&#x27;mail&#x27;</span>,<span class="literal">true</span>), <span class="variable">$this</span>-&gt;user-&gt;<span class="title function_ invoke__">hasLogin</span>(), <span class="variable">$this</span>-&gt;options-&gt;adminUrl);</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="meta">?&gt;</span></span><br><span class="line">    <span class="meta">&lt;?php</span> <span class="title function_ invoke__">parseContnet</span>(<span class="variable">$this</span>-&gt;content); <span class="meta">?&gt;</span></span><br><span class="line">&lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　然后需要绑定评论点击事件，事件需要被添加在<code>footer.php</code>中<code>&lt;body&gt;</code>块中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">if</span> (<span class="title function_ invoke__">array_key_exists</span>(<span class="string">&#x27;Hide&#x27;</span>, <span class="title class_">Typecho_Plugin</span>::<span class="title function_ invoke__">export</span>()[<span class="string">&#x27;activated&#x27;</span>])) : <span class="title class_">Hide_Plugin</span>::<span class="title function_ invoke__">commentClick</span>(); <span class="keyword">endif</span>; <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>　　以<code>default</code>主题为例，可在如下位置插入点击事件语句：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="variable language_">$this</span>-&gt;<span class="title function_ invoke__">footer</span>(); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">if</span> (<span class="title function_ invoke__">array_key_exists</span>(<span class="string">&#x27;Hide&#x27;</span>, <span class="title class_">Typecho_Plugin</span>::<span class="title function_ invoke__">export</span>()[<span class="string">&#x27;activated&#x27;</span>])) : <span class="title class_">Hide_Plugin</span>::<span class="title function_ invoke__">commentClick</span>(); <span class="keyword">endif</span>; <span class="meta">?&gt;</span></span><br><span class="line">&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　当内容被隐藏时评论才可见的<code>HTML</code>代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;reply2view&quot;</span> <span class="attr">style</span>=<span class="string">&quot;font-weight:bolder; color:#336699;&quot;</span>&gt;</span>您需要<span class="tag">&lt;<span class="name">a</span> <span class="attr">id</span>=<span class="string">&quot;comment_show&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#comments&quot;</span>&gt;</span>回复<span class="tag">&lt;/<span class="name">a</span>&gt;</span>才能显示此处隐藏内容。<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>　　我们需要根据这部分代码设计回复点击事件，回复点击事件就是点击<strong>回复</strong>之后会打开评论框，需要根据使用的主题进行微调，<strong><font color="blue">同时注意在配置界面填写点击事件代码时<code>&lt;script&gt;</code>与<code>&lt;/script&gt;</code>不可省略</font></strong>。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">$(<span class="string">&quot;#comment_show&quot;</span>).<span class="title function_ invoke__">click</span>(function() &#123;</span><br><span class="line">    $(<span class="string">&quot;#comments&quot;</span>).<span class="title function_ invoke__">fadeIn</span>(<span class="number">1000</span>);</span><br><span class="line">&#125;);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

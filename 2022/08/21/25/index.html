@@ -1,0 +1,134 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      给博客增加赞赏功能 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      给博客增加赞赏功能
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　虽然很多站长写博客是出于个人的兴趣，但是服务器的开支往往是一笔不小的费用。同时有激励才会有动力，因此，&lt;赞赏博客&gt;插件就出现了，该插件可以在你的每一篇博客的最下方添加一段打赏话语。<br>　　<div class="reply2view" style="font-weight:bolder; color:#336699;">您需要<a id="comment_show" href="#comments">回复</a>才能显示此处隐藏内容。</div></p>
+<p>　　插件使用步骤：</p>
+<ol>
+<li>在设置界面填写微信打赏二维码、支付宝打赏二维码地址</li>
+<li>自定义<code>jquery</code>（可选）</li>
+<li>自定义CSS样式（可选）</li>
+<li>将<code>img</code>文件夹的静态文件复制到你的主题文件夹下</li>
+<li>在主题文件夹<code>post.php</code>文件中添加打赏输出语句</li>
+</ol>
+<p>　　以<code>default</code>主题为例，在文章输出语句的下方添加按钮输出语句，如下图所示，之后打赏文字就会出现在你的博客上啦。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;div <span class="class"><span class="keyword">class</span>=&quot;<span class="title">post</span>-<span class="title">content</span>&quot; <span class="title">itemprop</span>=&quot;<span class="title">articleBody</span>&quot;&gt;</span></span><br><span class="line"><span class="class">    &lt;?<span class="title">php</span> $<span class="title">this</span>-&gt;<span class="title">content</span>(); ?&gt;</span></span><br><span class="line"><span class="class">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="class">&lt;?<span class="title">php</span> <span class="title">if</span> (<span class="title">array_key_exists</span>(&#x27;<span class="title">Reward</span>&#x27;, <span class="title">Typecho_Plugin</span>::<span class="title">export</span>()[&#x27;<span class="title">activated</span>&#x27;])) : <span class="title">Reward_Plugin</span>::<span class="title">show</span>($<span class="title">this</span>-&gt;<span class="title">options</span>-&gt;<span class="title">themeUrl</span>); <span class="title">endif</span>; ?&gt;</span></span><br></pre></td></tr></table></figure>
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

@@ -1,0 +1,157 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      Gitea 服务端部署 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      Gitea 服务端部署
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　<a target="_blank" rel="noopener" href="https://about.gitea.com/">Gitea</a>可以在我们的VPS中构建一个Git服务端，相当于一个袖珍版的”Github”，在自己的服务器中管理我们的代码。将我们的代码同步到不同的远程仓库中，也降低了我们代码丢失的机率。</p>
+<h1 id="准备数据库"><a href="#准备数据库" class="headerlink" title="准备数据库"></a>准备数据库</h1><h2 id="创建名为’giteadb’的数据库及用户’gitea’"><a href="#创建名为’giteadb’的数据库及用户’gitea’" class="headerlink" title="创建名为’giteadb’的数据库及用户’gitea’"></a>创建名为’giteadb’的数据库及用户’gitea’</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE giteadb CHARACTER SET &#x27;utf8mb4&#x27; COLLATE &#x27;utf8mb4_unicode_ci&#x27;;</span><br><span class="line"></span><br><span class="line">CREATE USER &#x27;gitea&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;gitea&#x27;;</span><br><span class="line">CREATE USER &#x27;gitea&#x27;@&#x27;127.0.0.1&#x27; IDENTIFIED BY &#x27;gitea&#x27;;</span><br><span class="line"></span><br><span class="line">GRANT ALL PRIVILEGES ON giteadb.* TO &#x27;gitea&#x27;@&#x27;localhost&#x27;;</span><br><span class="line">GRANT ALL PRIVILEGES ON giteadb.* TO &#x27;gitea&#x27;@&#x27;127.0.0.1&#x27;;</span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>数据库创建好之后，可以先测试一下数据库连接是否正常</p>
+</blockquote>
+<h1 id="安装-gitea"><a href="#安装-gitea" class="headerlink" title="安装 gitea"></a>安装 gitea</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">wget -O gitea https://dl.gitea.com/gitea/1.21.1/gitea-1.21.1-linux-amd64</span><br><span class="line">chmod +x gitea</span><br><span class="line">mv gitea /usr/local/bin/gitea</span><br><span class="line"></span><br><span class="line">adduser --system --shell /bin/bash --gecos &#x27;Git Version Control&#x27; --group --disabled-password --home /home/git git</span><br><span class="line"></span><br><span class="line">mkdir -p /var/lib/gitea/&#123;custom,data,log&#125;</span><br><span class="line">chown -R git:git /var/lib/gitea/ &amp;&amp; chmod -R 750 /var/lib/gitea/</span><br><span class="line">mkdir /etc/gitea</span><br><span class="line">chown root:git /etc/gitea &amp;&amp; chmod 770 /etc/gitea</span><br></pre></td></tr></table></figure>
+
+<h1 id="准备配置文件"><a href="#准备配置文件" class="headerlink" title="准备配置文件"></a>准备配置文件</h1><ol>
+<li>首先下载<a target="_blank" rel="noopener" href="https://github.com/go-gitea/gitea/blob/release/v1.21/custom/conf/app.example.ini">官方参考文件</a></li>
+<li>将配置文件移动到<code>/etc/gitea/app.ini</code>(位置随意)</li>
+<li>按需修改配置文件，主要修改<code>database</code>相关</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[database]</span></span><br><span class="line"><span class="comment">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span></span><br><span class="line"><span class="comment">;; MySQL Configuration</span></span><br><span class="line"><span class="comment">;;</span></span><br><span class="line"><span class="attr">DB_TYPE</span> = mysql</span><br><span class="line"><span class="attr">HOST</span> = <span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">3306</span> <span class="comment">; can use socket e.g. /var/run/mysqld/mysqld.sock</span></span><br><span class="line"><span class="attr">NAME</span> = giteadb</span><br><span class="line"><span class="attr">USER</span> = gitea</span><br><span class="line"><span class="attr">PASSWD</span> = `password`</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果自己确定配置文件没问题，不需要 gitea 修改其他配置，可以设置配置文件只读</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown root:git /etc/gitea/app.ini &amp;&amp; chmod 640 /etc/gitea/app.ini</span><br></pre></td></tr></table></figure></blockquote>
+<h1 id="设置自启动"><a href="#设置自启动" class="headerlink" title="设置自启动"></a>设置自启动</h1><p><a target="_blank" rel="noopener" href="https://github.com/go-gitea/gitea/blob/release/v1.21/contrib/systemd/gitea.service">官方自启动配置示例</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Gitea (Git with a cup of tea)</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">RestartSec=2s</span><br><span class="line">Type=simple</span><br><span class="line">User=git</span><br><span class="line">Group=git</span><br><span class="line">WorkingDirectory=/var/lib/gitea/</span><br><span class="line">ExecStart=/usr/local/bin/gitea web --config /etc/gitea/app.ini</span><br><span class="line">Restart=always</span><br><span class="line">Environment=USER=git HOME=/home/git GITEA_WORK_DIR=/var/lib/gitea</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+
+<p>最后通过<code>sudo systemctl enable --now gitea</code>开启 gitea 并自启动</p>
+<h1 id="配置-Nginx-反向代理"><a href="#配置-Nginx-反向代理" class="headerlink" title="配置 Nginx 反向代理"></a>配置 Nginx 反向代理</h1><p>在<code>server</code>块中添加</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    client_max_body_size 512M;</span><br><span class="line">    proxy_pass http://localhost:3000;</span><br><span class="line">    proxy_set_header Connection $http_connection;</span><br><span class="line">    proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">    proxy_set_header Host $host;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>参考文献：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.gitea.cn/category/installation">官方安装手册</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/go-gitea/gitea/issues/28383">SMTP server does not support AUTH</a></li>
+<li><a target="_blank" rel="noopener" href="https://forum.gitea.com/t/email-could-not-initiate-smtp-session-error/8164/1">Email could not initiate SMTP session error</a></li>
+</ul>
+</blockquote>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

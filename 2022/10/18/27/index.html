@@ -1,0 +1,130 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      rclone 挂载网盘字符问题 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      rclone 挂载网盘字符问题
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　由于VPS硬盘容量实在太小，而某些BT种子的文件又很大，所以我在VPS上使用Rclone进行了中转，同时Rclone还支持将网盘挂载到本地。<br>　　某天我在VPS上查看被挂载网盘内的文件时，发现其在VPS上显示的名称与网盘内的名称不相同，具体来说就是网盘内的名称为<code>？</code>，而本地则显示<code>?</code>，于是就猜测是Rclone的编码导致的，不过网上提出相关问题的人比较少，于是乎就使用<code>help</code>命令查看，最后找到了相关配置。当使用<code>rclone help backend onedrive</code>命令查看时，就会显示相关的配置属性，可以看到一个<code>encoding</code>选项，不过具体含义不太清楚，还好这个命令提供了一个网址，于是就从<a target="_blank" rel="noopener" href="https://rclone.org/docs/">官方手册</a>上寻找答案。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#### --onedrive-encoding</span><br><span class="line"></span><br><span class="line">The encoding for the backend.</span><br><span class="line"></span><br><span class="line">See the [encoding section in the overview](/overview/#encoding) for more info.</span><br><span class="line"></span><br><span class="line">Properties:</span><br><span class="line"></span><br><span class="line">- Config:      encoding</span><br><span class="line">- Env Var:     RCLONE_ONEDRIVE_ENCODING</span><br><span class="line">- Type:        MultiEncoder</span><br><span class="line">- Default:     Slash,LtGt,DoubleQuote,Colon,Question,Asterisk,Pipe,BackSlash,Del,Ctl,LeftSpace,LeftTilde,RightSpace,RightPeriod,InvalidUtf8,Dot</span><br></pre></td></tr></table></figure>
+<p>　　其实解决方法也很简单，修改<code>rclone.conf</code>配置文件，给其加上一个属性就可以了。</p>
+<div class="reply2view" style="font-weight:bolder; color:#336699;">您需要<a id="comment_show" href="#comments">回复</a>才能显示此处隐藏内容。</div>
+
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://rclone.org/overview/#encoding">Overview of cloud storage systems</a></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

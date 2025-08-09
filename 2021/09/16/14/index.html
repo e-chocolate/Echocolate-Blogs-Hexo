@@ -1,0 +1,136 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      自动更新Linux黑名单 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      自动更新Linux黑名单
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　偶然查看自己的登录日志，发现“总有刁民想害朕”，之前就曾经<a target="_blank" rel="noopener" href="https://blogs.echocolate.xyz/archives/7/">发帖</a>说过服务器总被尝试恶意访问，解决思路也比较简单粗暴——<strong>封IP</strong>。<br>　　下面是用<code>lastb</code>命令查看服务器的登录错误日志。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">ftpuser  ssh:notty    133.130.103.212  Tue Sep 14 01:37 - 01:37  (00:00)</span><br><span class="line">ftpuser  ssh:notty    133.130.103.212  Tue Sep 14 01:37 - 01:37  (00:00)</span><br><span class="line">rl       ssh:notty    81.182.254.124   Tue Sep 14 01:36 - 01:36  (00:00)</span><br><span class="line">rl       ssh:notty    81.182.254.124   Tue Sep 14 01:36 - 01:36  (00:00)</span><br><span class="line">test1    ssh:notty    133.130.103.212  Tue Sep 14 01:36 - 01:36  (00:00)</span><br><span class="line">test1    ssh:notty    133.130.103.212  Tue Sep 14 01:36 - 01:36  (00:00)</span><br><span class="line">catadmin ssh:notty    133.130.103.212  Tue Sep 14 01:34 - 01:34  (00:00)</span><br><span class="line">catadmin ssh:notty    133.130.103.212  Tue Sep 14 01:34 - 01:34  (00:00)</span><br><span class="line">root     ssh:notty    81.182.254.124   Tue Sep 14 01:34 - 01:34  (00:00)</span><br><span class="line">mail     ssh:notty    133.130.103.212  Tue Sep 14 01:33 - 01:33  (00:00)</span><br><span class="line">santana  ssh:notty    81.182.254.124   Tue Sep 14 01:33 - 01:33  (00:00)</span><br><span class="line">santana  ssh:notty    81.182.254.124   Tue Sep 14 01:33 - 01:33  (00:00)</span><br><span class="line">gew      ssh:notty    133.130.103.212  Tue Sep 14 01:32 - 01:32  (00:00)</span><br><span class="line">gew      ssh:notty    133.130.103.212  Tue Sep 14 01:32 - 01:32  (00:00)</span><br><span class="line">root     ssh:notty    81.182.254.124   Tue Sep 14 01:31 - 01:31  (00:00)</span><br><span class="line">ubuntu   ssh:notty    133.130.103.212  Tue Sep 14 01:31 - 01:31  (00:00)</span><br><span class="line">ubuntu   ssh:notty    133.130.103.212  Tue Sep 14 01:31 - 01:31  (00:00)</span><br><span class="line">mysql    ssh:notty    81.182.254.124   Tue Sep 14 01:30 - 01:30  (00:00)</span><br><span class="line">mysql    ssh:notty    81.182.254.124   Tue Sep 14 01:30 - 01:30  (00:00)</span><br><span class="line">yl       ssh:notty    133.130.103.212  Tue Sep 14 01:30 - 01:30  (00:00)</span><br><span class="line">yl       ssh:notty    133.130.103.212  Tue Sep 14 01:30 - 01:30  (00:00)</span><br><span class="line">donald   ssh:notty    81.182.254.124   Tue Sep 14 01:28 - 01:28  (00:00)</span><br><span class="line">donald   ssh:notty    81.182.254.124   Tue Sep 14 01:28 - 01:28  (00:00)</span><br><span class="line">wangqj   ssh:notty    133.130.103.212  Tue Sep 14 01:28 - 01:28  (00:00)</span><br><span class="line">wangqj   ssh:notty    133.130.103.212  Tue Sep 14 01:28 - 01:28  (00:00)</span><br><span class="line">sp       ssh:notty    133.130.103.212  Tue Sep 14 01:27 - 01:27  (00:00)</span><br><span class="line">sp       ssh:notty    133.130.103.212  Tue Sep 14 01:27 - 01:27  (00:00)</span><br><span class="line">tom      ssh:notty    81.182.254.124   Tue Sep 14 01:27 - 01:27  (00:00)</span><br><span class="line">tom      ssh:notty    81.182.254.124   Tue Sep 14 01:27 - 01:27  (00:00)</span><br><span class="line">root     ssh:notty    112.5.178.33     Tue Sep 14 01:27 - 01:27  (00:00)</span><br><span class="line">miner    ssh:notty    133.130.103.212  Tue Sep 14 01:26 - 01:26  (00:00)</span><br><span class="line">miner    ssh:notty    133.130.103.212  Tue Sep 14 01:26 - 01:26  (00:00)</span><br><span class="line">root     ssh:notty    81.182.254.124   Tue Sep 14 01:25 - 01:25  (00:00)</span><br><span class="line">admin2   ssh:notty    133.130.103.212  Tue Sep 14 01:25 - 01:25  (00:00)</span><br><span class="line">admin2   ssh:notty    133.130.103.212  Tue Sep 14 01:25 - 01:25  (00:00)</span><br><span class="line">xyh      ssh:notty    81.182.254.124   Tue Sep 14 01:24 - 01:24  (00:00)</span><br><span class="line">xyh      ssh:notty    81.182.254.124   Tue Sep 14 01:24 - 01:24  (00:00)</span><br><span class="line">jenkins  ssh:notty    133.130.103.212  Tue Sep 14 01:24 - 01:24  (00:00)</span><br><span class="line">jenkins  ssh:notty    133.130.103.212  Tue Sep 14 01:24 - 01:24  (00:00)</span><br><span class="line">admin    ssh:notty    81.182.254.124   Tue Sep 14 01:23 - 01:23  (00:00)</span><br><span class="line">admin    ssh:notty    81.182.254.124   Tue Sep 14 01:23 - 01:23  (00:00)</span><br><span class="line">louis    ssh:notty    133.130.103.212  Tue Sep 14 01:22 - 01:22  (00:00)</span><br><span class="line">louis    ssh:notty    133.130.103.212  Tue Sep 14 01:22 - 01:22  (00:00)</span><br><span class="line">mqu      ssh:notty    133.130.103.212  Tue Sep 14 01:21 - 01:21  (00:00)</span><br><span class="line">mqu      ssh:notty    133.130.103.212  Tue Sep 14 01:21 - 01:21  (00:00)</span><br><span class="line">grant    ssh:notty    81.182.254.124   Tue Sep 14 01:21 - 01:21  (00:00)</span><br><span class="line">grant    ssh:notty    81.182.254.124   Tue Sep 14 01:21 - 01:21  (00:00)</span><br><span class="line">imobilis ssh:notty    133.130.103.212  Tue Sep 14 01:20 - 01:20  (00:00)</span><br><span class="line">imobilis ssh:notty    133.130.103.212  Tue Sep 14 01:20 - 01:20  (00:00)</span><br><span class="line">root     ssh:notty    81.182.254.124   Tue Sep 14 01:20 - 01:20  (00:00)</span><br><span class="line">pni      ssh:notty    133.130.103.212  Tue Sep 14 01:19 - 01:19  (00:00)</span><br><span class="line">pni      ssh:notty    133.130.103.212  Tue Sep 14 01:19 - 01:19  (00:00)</span><br><span class="line">mgarcia  ssh:notty    81.182.254.124   Tue Sep 14 01:18 - 01:18  (00:00)</span><br><span class="line">mgarcia  ssh:notty    81.182.254.124   Tue Sep 14 01:18 - 01:18  (00:00)</span><br><span class="line">root     ssh:notty    133.130.103.212  Tue Sep 14 01:18 - 01:18  (00:00)</span><br><span class="line">diane    ssh:notty    81.182.254.124   Tue Sep 14 01:17 - 01:17  (00:00)</span><br><span class="line">diane    ssh:notty    81.182.254.124   Tue Sep 14 01:17 - 01:17  (00:00)</span><br><span class="line">gk       ssh:notty    133.130.103.212  Tue Sep 14 01:16 - 01:16  (00:00)</span><br><span class="line">gk       ssh:notty    133.130.103.212  Tue Sep 14 01:16 - 01:16  (00:00)</span><br><span class="line">infinity ssh:notty    81.182.254.124   Tue Sep 14 01:15 - 01:15  (00:00)</span><br><span class="line">infinity ssh:notty    81.182.254.124   Tue Sep 14 01:15 - 01:15  (00:00)</span><br><span class="line">dba      ssh:notty    133.130.103.212  Tue Sep 14 01:15 - 01:15  (00:00)</span><br><span class="line">dba      ssh:notty    133.130.103.212  Tue Sep 14 01:15 - 01:15  (00:00)</span><br><span class="line">gaojian  ssh:notty    81.182.254.124   Tue Sep 14 01:14 - 01:14  (00:00)</span><br><span class="line">gaojian  ssh:notty    81.182.254.124   Tue Sep 14 01:14 - 01:14  (00:00)</span><br><span class="line">pdx      ssh:notty    133.130.103.212  Tue Sep 14 01:10 - 01:10  (00:00)</span><br><span class="line">pdx      ssh:notty    133.130.103.212  Tue Sep 14 01:10 - 01:10  (00:00)</span><br><span class="line">sa       ssh:notty    81.182.254.124   Tue Sep 14 01:10 - 01:10  (00:00)</span><br><span class="line">sa       ssh:notty    81.182.254.124   Tue Sep 14 01:10 - 01:10  (00:00)</span><br><span class="line"></span><br><span class="line">btmp begins Tue Sep 14 01:10:19 2022</span><br></pre></td></tr></table></figure>
+<p>　　可以看到某些IP正在不怀好意的尝试登陆我的服务器，为此我们需要定时从登入系统失败日志中取得这些恶意IP并加入黑名单中。简单写了一个自动更新黑名单的脚本，脚本的处理逻辑如下：</p>
+<ol>
+<li>利用<code>sort</code>命令搭配<code>uniq</code>命令来取得每一个IP的登陆次数</li>
+<li>将尝试登陆次数超过10的IP地址即视为恶意IP，并将其加入到黑名单当中</li>
+</ol>
+<p>　　这样的处理逻辑也可以应用在nginx黑名单的设置中，缓解我们的服务器被恶意攻击的情况。</p>
+<div class="reply2view" style="font-weight:bolder; color:#336699;">您需要<a id="comment_show" href="#comments">回复</a>才能显示此处隐藏内容。</div>
+　　同时，为了避免服务器被恶意破解的情况发生，可以考虑对服务器进行下面的处理：
+1. 修改自己的 ssh 端口，修改为5位数的最好
+2. 禁止 root 用户的登录，可以新建一个用户，这样就算被破解了也可以阻挡一些越权操作
+3. 如果自己的IP固定的话，可以设置一个白名单，只允许从自己的IP登录，其它的IP一律不允许登录。
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

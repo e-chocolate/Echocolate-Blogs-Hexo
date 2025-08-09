@@ -1,0 +1,298 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      自建邮件服务器教程 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      自建邮件服务器教程
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>首先需要设置好主机名并申请好证书</p>
+<h2 id="测试服务器25端口是否可以发信"><a href="#测试服务器25端口是否可以发信" class="headerlink" title="测试服务器25端口是否可以发信"></a>测试服务器25端口是否可以发信</h2><p>测试25端口出站方向是否开放，出站方向的25端口打开，才能通过自己的服务器发送邮件。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(base) echo@neko:~$ telnet smtp.qq.com 25</span><br><span class="line">Trying 2402:4e00:8012:58::40...</span><br><span class="line">Connected to smtp.qq.com.</span><br><span class="line">Escape character is &#x27;^]&#x27;.</span><br><span class="line">220 newxmesmtplogicsvrsza7.qq.com XMail Esmtp QQ Mail Server.</span><br><span class="line">^]</span><br><span class="line"><span class="meta prompt_">telnet&gt; </span><span class="language-bash">close</span></span><br><span class="line">Connection closed.</span><br></pre></td></tr></table></figure>
+
+<p><code>telnet</code>命令行的使用可以参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/liang100k/article/details/50920499">帖子</a></p>
+<h2 id="主机名设置"><a href="#主机名设置" class="headerlink" title="主机名设置"></a>主机名设置</h2><p>需要设置<code>/etc/hosts</code>和<code>/etc/hostname</code>这两个与主机名相关的文件，文件内容如下图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># /etc/hosts，xx.xx.xx.xx是你服务器的公网IP</span><br><span class="line">127.0.0.1       localhost</span><br><span class="line">xx.xx.xx.xx     mail.example.org     mail</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># /etc/hostname</span><br><span class="line">mail</span><br></pre></td></tr></table></figure>
+
+<p>终端执行<code>hostname -F /etc/hostname</code>更新主机名，最后短主机名和FQDN均正常就没有问题</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@mail:~# hostname -F /etc/hostname</span><br><span class="line">root@mail:~$ hostname</span><br><span class="line">mail</span><br><span class="line">root@mail:~$ hostname -f</span><br><span class="line">mail.example.org</span><br></pre></td></tr></table></figure>
+
+<h2 id="DNS记录"><a href="#DNS记录" class="headerlink" title="DNS记录"></a>DNS记录</h2><p>去你的服务器提供商或者DNS服务商增加DNS记录<br>0. 添加一个A记录，主机记录名与下一步对应，即<code>mail.example.org</code>或者<code>mx.example.org</code>，IP填你的邮件服务器的IP。</p>
+<ol>
+<li>增加一个MX记录，一般MX记录设置为<code>mail.example.org</code>或者<code>mx.example.org</code>，不过你也设置为其他的。</li>
+<li>添加CNAME记录，这一步是可选步骤，一般会增加下面三个CNAME记录，均指向第一步的<code>mail.example.org</code>或者<code>mx.example.org</code>。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">imap.example.org</span><br><span class="line">pop.example.org</span><br><span class="line">smtp.example.org</span><br></pre></td></tr></table></figure>
+
+<h2 id="申请ssl证书"><a href="#申请ssl证书" class="headerlink" title="申请ssl证书"></a>申请ssl证书</h2><p>申请通配符证书&#x2F;泛域名证书，我由于服务器也在使用lnmp建站，直接使用的lnmp工具申请的证书。本质也还是使用<code>acme.sh</code>申请证书，这个自行研究吧。</p>
+<h2 id="建立数据库并插入用户"><a href="#建立数据库并插入用户" class="headerlink" title="建立数据库并插入用户"></a>建立数据库并插入用户</h2><p>执行下面的SQL建库建表，用于邮箱登录认证，并插入数据，建议插入<code>dmarc@example.org</code>用户，具体原因下面再说。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> database mailsys;</span><br><span class="line">use mailsys;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> `virtual_domains` (  </span><br><span class="line">  `id` <span class="type">int</span> <span class="keyword">NOT NULL</span> auto_increment,  </span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">50</span>) <span class="keyword">NOT NULL</span>,  </span><br><span class="line">  <span class="keyword">PRIMARY KEY</span> (`id`))  </span><br><span class="line">ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> `virtual_users` (  </span><br><span class="line">`id` <span class="type">int</span> <span class="keyword">NOT NULL</span> auto_increment,  </span><br><span class="line">`domain_id` <span class="type">int</span> <span class="keyword">NOT NULL</span>,  </span><br><span class="line">`password` <span class="type">varchar</span>(<span class="number">106</span>) <span class="keyword">NOT NULL</span>,  </span><br><span class="line">`email` <span class="type">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,  </span><br><span class="line"><span class="keyword">PRIMARY KEY</span> (`id`),  </span><br><span class="line"><span class="keyword">UNIQUE</span> KEY `email` (`email`),  </span><br><span class="line"><span class="keyword">FOREIGN KEY</span> (domain_id) <span class="keyword">REFERENCES</span> virtual_domains(id) <span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE)  </span><br><span class="line">ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE TABLE</span> `virtual_aliases` (  </span><br><span class="line">`id` <span class="type">int</span> <span class="keyword">NOT NULL</span> auto_increment,  </span><br><span class="line">`domain_id` <span class="type">int</span> <span class="keyword">NOT NULL</span>,  </span><br><span class="line">`source` <span class="type">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,  </span><br><span class="line">`destination` <span class="type">varchar</span>(<span class="number">100</span>) <span class="keyword">NOT NULL</span>,  </span><br><span class="line"><span class="keyword">PRIMARY KEY</span> (`id`),  </span><br><span class="line"><span class="keyword">FOREIGN KEY</span> (domain_id) <span class="keyword">REFERENCES</span> virtual_domains(id) <span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE)  </span><br><span class="line">ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">insert into</span> virtual_domains(id,name) <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">&#x27;example.org&#x27;</span>);</span><br><span class="line"><span class="keyword">insert into</span> virtual_domains(id,name) <span class="keyword">values</span>(<span class="number">2</span>,<span class="string">&#x27;mail.example.org&#x27;</span>);</span><br><span class="line"></span><br><span class="line"># mysql8 中使用</span><br><span class="line"><span class="keyword">insert into</span> virtual_users(id,domain_id,password,email) <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">1</span>,<span class="keyword">left</span>(TO_BASE64(UNHEX(SHA2(<span class="string">&#x27;13456&#x27;</span>, <span class="number">512</span>))),<span class="number">12</span>),<span class="string">&#x27;test@example.org&#x27;</span>);</span><br><span class="line"><span class="keyword">insert into</span> virtual_users(id,domain_id,password,email) <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="keyword">left</span>(TO_BASE64(UNHEX(SHA2(<span class="string">&#x27;13456&#x27;</span>, <span class="number">512</span>))),<span class="number">12</span>),<span class="string">&#x27;test@mail.example.org&#x27;</span>);</span><br><span class="line"></span><br><span class="line"># mysql5 中使用</span><br><span class="line"><span class="keyword">insert into</span> virtual_users(id,domain_id,password,email) <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">1</span>,ENCRYPT(<span class="string">&#x27;654321&#x27;</span>),<span class="string">&#x27;test@example.org&#x27;</span>);</span><br><span class="line"><span class="keyword">insert into</span> virtual_users(id,domain_id,password,email) <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">2</span>,ENCRYPT(<span class="string">&#x27;123456&#x27;</span>),<span class="string">&#x27;test@mail.example.org&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert into</span> virtual_aliases(id,domain_id,source,destination) <span class="keyword">values</span> (<span class="number">1</span>,<span class="number">1</span>,<span class="string">&#x27;dmarc@example.org&#x27;</span>,<span class="string">&#x27;test@example.org&#x27;</span>);</span><br><span class="line"><span class="keyword">insert into</span> virtual_aliases(id,domain_id,source,destination) <span class="keyword">values</span> (<span class="number">2</span>,<span class="number">1</span>,<span class="string">&#x27;info@example.org&#x27;</span>,<span class="string">&#x27;test@example.org&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>需要注意的是，MySQL5.7版本之后，<code>ENCRYPT()</code>函数被弃用，所以密码加密方式稍有区别，下文进行dovecot登录验证设置的时候需要与此对应。</p>
+</blockquote>
+<h2 id="创建邮件系统专用用户并设置邮件文件夹权限"><a href="#创建邮件系统专用用户并设置邮件文件夹权限" class="headerlink" title="创建邮件系统专用用户并设置邮件文件夹权限"></a>创建邮件系统专用用户并设置邮件文件夹权限</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">groupadd -g 2000 vmail</span><br><span class="line">useradd -g vmail -u 2000 vmail -d /var/mail/ -s /sbin/nologin</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">设置邮件存储目录权限</span></span><br><span class="line">ll /var/mail/</span><br><span class="line">chown -R vmail:vmail /var/mail/</span><br><span class="line">ll /var/mail/</span><br></pre></td></tr></table></figure>
+
+<h1 id="邮箱服务器搭建"><a href="#邮箱服务器搭建" class="headerlink" title="邮箱服务器搭建"></a>邮箱服务器搭建</h1><h2 id="MTA"><a href="#MTA" class="headerlink" title="MTA"></a>MTA</h2><p>MTA (Mail Transfer Agent) 是邮件传输代理，其工作职责是转发处理不同电子邮件服务供应商之间的邮件，把来自于MUA的邮件转发到合适的MTA服务器。</p>
+<p>安装Postfix: <code>sudo apt-get install postfix postfix-mysql postfix-doc</code></p>
+<p>安装过程中的配置选项：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mail configuration: Internet Site</span><br><span class="line">System mail name: example.org</span><br></pre></td></tr></table></figure>
+
+<p>安装完成之后，修改<code>/etc/postfix/main.cf</code>文件，</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TLS parameters</span></span><br><span class="line"><span class="attr">smtpd_tls_cert_file</span>=********.cer</span><br><span class="line"><span class="attr">smtpd_tls_key_file</span>=********.key</span><br><span class="line"><span class="attr">smtpd_use_tls</span>=<span class="literal">yes</span></span><br><span class="line"><span class="attr">smtpd_tls_auth_only</span> = <span class="literal">yes</span></span><br><span class="line"><span class="attr">smtp_tls_security_level</span> = may</span><br><span class="line"><span class="attr">smtpd_tls_security_level</span> = may</span><br><span class="line"><span class="comment"># smtpd_tls_session_cache_database = btree:$&#123;data_directory&#125;/smtpd_scache</span></span><br><span class="line"><span class="comment"># smtp_tls_session_cache_database = btree:$&#123;data_directory&#125;/smtp_scache</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for</span></span><br><span class="line"><span class="comment"># information on enabling SSL in the smtp client.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># smtp config</span></span><br><span class="line"><span class="attr">smtpd_sasl_type</span> = dovecot</span><br><span class="line"><span class="attr">smtpd_sasl_path</span> = private/auth</span><br><span class="line"><span class="attr">smtpd_sasl_auth_enable</span> = <span class="literal">yes</span></span><br><span class="line"><span class="attr">message_size_limit</span> = <span class="number">15728640</span></span><br><span class="line"><span class="attr">broken_sasl_auth_clients</span> = <span class="literal">yes</span></span><br><span class="line"><span class="attr">smtpd_sasl_security_options</span> = noanonymous, noplaintext</span><br><span class="line"><span class="attr">smtpd_sasl_tls_security_options</span> = noanonymous</span><br><span class="line"><span class="attr">smtpd_helo_restrictions</span> = permit_mynetworks permit_sasl_authenticated reject_invalid_helo_hostname reject_non_fqdn_helo_hostname</span><br><span class="line"><span class="attr">smtpd_recipient_restrictions</span> = permit_mynetworks permit_sasl_authenticated reject_non_fqdn_recipient reject_unknown_recipient_domain reject_unlisted_recipient reject_unauth_destination</span><br><span class="line"><span class="attr">smtpd_sender_restrictions</span> = permit_mynetworks permit_sasl_authenticated reject_non_fqdn_sender reject_unknown_sender_domain</span><br><span class="line"><span class="attr">smtpd_relay_restrictions</span> = permit_mynetworks permit_sasl_authenticated defer_unauth_destination</span><br><span class="line"></span><br><span class="line"><span class="comment"># host config</span></span><br><span class="line"><span class="attr">myhostname</span> = mail.example.org</span><br><span class="line"><span class="attr">alias_maps</span> = hash:/etc/aliases</span><br><span class="line"><span class="attr">alias_database</span> = hash:/etc/aliases</span><br><span class="line"><span class="attr">myorigin</span> = /etc/mailname</span><br><span class="line"><span class="attr">mydestination</span> = localhost</span><br><span class="line"><span class="attr">relayhost</span> = </span><br><span class="line"><span class="attr">mynetworks</span> = <span class="number">127.0</span>.<span class="number">0.0</span>/<span class="number">8</span> [::ffff:<span class="number">127.0</span>.<span class="number">0.0</span>]/<span class="number">104</span> [::<span class="number">1</span>]/<span class="number">128</span></span><br><span class="line"><span class="attr">mailbox_size_limit</span> = <span class="number">0</span></span><br><span class="line"><span class="attr">recipient_delimiter</span> = +</span><br><span class="line"><span class="attr">inet_interfaces</span> = all</span><br><span class="line"><span class="attr">inet_protocols</span> = all</span><br><span class="line"><span class="attr">html_directory</span> = /usr/share/doc/postfix/html</span><br><span class="line"></span><br><span class="line"><span class="comment"># lmtp</span></span><br><span class="line"><span class="attr">virtual_transport</span> = lmtp:unix:private/dovecot-lmtp</span><br><span class="line"></span><br><span class="line"><span class="comment"># MySQL</span></span><br><span class="line"><span class="attr">virtual_mailbox_domains</span> = mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf</span><br><span class="line"><span class="attr">virtual_mailbox_maps</span> = mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf</span><br><span class="line"><span class="attr">virtual_alias_maps</span> = mysql:/etc/postfix/mysql-virtual-alias-maps.cf</span><br></pre></td></tr></table></figure>
+
+<p>配置连接MySQL的相关信息</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/postfix/mysql-virtual-mailbox-domains.cf</span></span><br><span class="line"><span class="attr">user</span> = username</span><br><span class="line"><span class="attr">password</span> = yourpassword</span><br><span class="line"><span class="attr">hosts</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">dbname</span> = mailsys</span><br><span class="line"><span class="attr">query</span> = SELECT <span class="number">1</span> FROM virtual_domains WHERE name=<span class="string">&#x27;%s&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># nano /etc/postfix/mysql-virtual-mailbox-maps.cf</span></span><br><span class="line"><span class="attr">user</span> = username</span><br><span class="line"><span class="attr">password</span> = yourpassword</span><br><span class="line"><span class="attr">hosts</span> = <span class="number">127.0</span>.<span class="number">0.1</span>  </span><br><span class="line"><span class="attr">dbname</span> = mailsys</span><br><span class="line"><span class="attr">query</span> = SELECT <span class="number">1</span> FROM virtual_users WHERE email=<span class="string">&#x27;%s&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># nano /etc/postfix/mysql-virtual-alias-maps.cf</span></span><br><span class="line"><span class="attr">user</span> = username</span><br><span class="line"><span class="attr">password</span> = yourpassword</span><br><span class="line"><span class="attr">hosts</span> = <span class="number">127.0</span>.<span class="number">0.1</span></span><br><span class="line"><span class="attr">dbname</span> = mailsys</span><br><span class="line"><span class="attr">query</span> = SELECT destination FROM virtual_aliases WHERE source=<span class="string">&#x27;%s&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>重启postfix并验证是否可以正常连接数据库<code>systemctl restart postfix</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">postmap -q example.org mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf</span><br><span class="line">1</span><br><span class="line">postmap -q test@example.org mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf</span><br><span class="line">1</span><br><span class="line">postmap -q dmarc@example.org mysql:/etc/postfix/mysql-virtual-alias-maps.cf</span><br><span class="line">test@example.org</span><br></pre></td></tr></table></figure>
+
+<p>配置<code> /etc/postfix/master.cf</code>，去掉里面 submission和smtps所在的两行所属配置项的注释。</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">submission inet n       -       y       -       -       smtpd</span><br><span class="line"> -o <span class="attr">syslog_name</span>=postfix/submission</span><br><span class="line"> -o <span class="attr">smtpd_tls_security_level</span>=encrypt</span><br><span class="line"> -o <span class="attr">smtpd_sasl_auth_enable</span>=<span class="literal">yes</span></span><br><span class="line"> -o <span class="attr">smtpd_tls_auth_only</span>=<span class="literal">yes</span></span><br><span class="line"> -o <span class="attr">smtpd_reject_unlisted_recipient</span>=<span class="literal">no</span></span><br><span class="line"> -o <span class="attr">smtpd_client_restrictions</span>=<span class="variable">$mua_client_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_helo_restrictions</span>=<span class="variable">$mua_helo_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_sender_restrictions</span>=<span class="variable">$mua_sender_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_recipient_restrictions</span>=</span><br><span class="line"> -o <span class="attr">smtpd_relay_restrictions</span>=permit_sasl_authenticated,reject</span><br><span class="line"> -o <span class="attr">milter_macro_daemon_name</span>=ORIGINATING</span><br><span class="line">smtps     inet  n       -       y       -       -       smtpd</span><br><span class="line"> -o <span class="attr">syslog_name</span>=postfix/smtps</span><br><span class="line"> -o <span class="attr">smtpd_tls_wrappermode</span>=<span class="literal">yes</span></span><br><span class="line"> -o <span class="attr">smtpd_sasl_auth_enable</span>=<span class="literal">yes</span></span><br><span class="line"> -o <span class="attr">smtpd_reject_unlisted_recipient</span>=<span class="literal">no</span></span><br><span class="line"> -o <span class="attr">smtpd_client_restrictions</span>=<span class="variable">$mua_client_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_helo_restrictions</span>=<span class="variable">$mua_helo_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_sender_restrictions</span>=<span class="variable">$mua_sender_restrictions</span></span><br><span class="line"> -o <span class="attr">smtpd_recipient_restrictions</span>=</span><br><span class="line"> -o <span class="attr">smtpd_relay_restrictions</span>=permit_sasl_authenticated,reject</span><br><span class="line"> -o <span class="attr">milter_macro_daemon_name</span>=ORIGINATING</span><br></pre></td></tr></table></figure>
+
+<p>配置文件夹权限<code>chmod -R o-rwx /etc/postfix</code></p>
+<h2 id="MDA"><a href="#MDA" class="headerlink" title="MDA"></a>MDA</h2><p>MDA (Mail Delivery Agent) 是邮件投递代理，是一个用于保存用户邮件的“信箱”服务器，其工作职责是把来自于 MTA 的邮件保存到本地的收件箱中。</p>
+<p>安装Dovecot并设置配置文件目录权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install dovecot-core dovecot-imapd dovecot-pop3d dovecot-lmtpd dovecot-mysql</span><br><span class="line">chown -R vmail:dovecot /etc/dovecot</span><br><span class="line">chmod -R o-rwx /etc/dovecot</span><br></pre></td></tr></table></figure>
+
+<p>Dovecot的配置文件有一点点多：</p>
+<ol>
+<li>修改<code>/etc/dovecot/dovecot.conf</code>配置文件，<strong>该文件配置 Dovecot 的全局参数</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Enable installed protocols</span></span><br><span class="line">!include_try /usr/share/dovecot/protocols.d/*.protocol</span><br><span class="line"><span class="attr">protocols</span> = imap pop3 lmtp</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>修改<code>/etc/dovecot/conf.d/10-mail.conf</code>配置文件，<strong>该文件配置邮箱文件存储的位置和命名空间</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mail_location</span> = maildir:/var/mail/vhosts/%d/%n</span><br></pre></td></tr></table></figure>
+<p>创建邮箱文件存储目录并设置权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /var/mail/vhosts/example.org</span><br><span class="line">chown -R vmail:vmail /var/mail/</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改<code>/etc/dovecot/conf.d/10-auth.conf</code>配置文件，<strong>该文件配置用户身份认证流程</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">auth_mechanisms</span> = plain login</span><br><span class="line"><span class="attr">disable_plaintext_auth</span> = <span class="literal">yes</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#!include auth-system.conf.ext</span></span><br><span class="line">!include auth-sql.conf.ext</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>修改<code>/etc/dovecot/conf.d/auth-sql.conf.ext</code>配置文件，<strong>该文件配置数据库认证的参数</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">passdb &#123;</span><br><span class="line">  <span class="attr">driver</span> = sql</span><br><span class="line"></span><br><span class="line">  <span class="comment"># Path for SQL configuration file, see example-config/dovecot-sql.conf.ext</span></span><br><span class="line">  <span class="attr">args</span> = /etc/dovecot/dovecot-sql.conf.ext</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">userdb &#123;</span><br><span class="line">  <span class="attr">driver</span> = static</span><br><span class="line">  <span class="attr">args</span> = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>修改<code>/etc/dovecot/dovecot-sql.conf.ext</code>配置文件，<strong>该文件配置验证用户名密码所用的数据表以及认证方法</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">driver</span> = mysql</span><br><span class="line"><span class="attr">connect</span> = host=<span class="number">127.0</span>.<span class="number">0.1</span> dbname=mailsys user=username password=yourpassword</span><br><span class="line"><span class="attr">default_pass_scheme</span> = CRYPT</span><br><span class="line"><span class="attr">password_query</span> = SELECT email as user, password FROM virtual_users WHERE email=<span class="string">&#x27;%u&#x27;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意此处的加密存储算法，上文如果是使用<code>ENCRYPT()</code>函数，此处加密方式就选择<code>default_pass_scheme = CRYPT</code>，而<code>TO_BASE64(UNHEX(SHA2(&#39;password&#39;, 512)))</code>对应的就是<code>default_pass_scheme = SHA512</code></p>
+</blockquote>
+<ol start="6">
+<li>修改<code>/etc/dovecot/conf.d/10-master.conf</code>配置文件，<strong>该文件配置 Dovecot 中各服务的主要参数</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">service imap-login &#123;</span><br><span class="line">  inet_listener imap &#123;</span><br><span class="line">    <span class="attr">port</span> = <span class="number">143</span></span><br><span class="line">  &#125;</span><br><span class="line">  inet_listener imaps &#123;</span><br><span class="line">    <span class="attr">port</span> = <span class="number">993</span></span><br><span class="line">    <span class="attr">ssl</span> = <span class="literal">yes</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service lmtp &#123;</span><br><span class="line">    unix_listener /var/spool/postfix/private/dovecot-lmtp &#123;</span><br><span class="line">    <span class="attr">mode</span> = <span class="number">0600</span></span><br><span class="line">    <span class="attr">user</span> = postfix</span><br><span class="line">    <span class="attr">group</span> = postfix</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service imap &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service auth &#123;</span><br><span class="line">  unix_listener /var/spool/postfix/private/auth &#123;</span><br><span class="line">    <span class="attr">mode</span> = <span class="number">0666</span></span><br><span class="line">    <span class="attr">user</span> = postfix</span><br><span class="line">    <span class="attr">group</span> = postfix</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  unix_listener auth-userdb &#123;</span><br><span class="line">    <span class="attr">mode</span> = <span class="number">0600</span></span><br><span class="line">    <span class="attr">user</span> = mail_sys</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="attr">user</span> = dovecot</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service auth-worker &#123;</span><br><span class="line">  <span class="attr">user</span> = mail_sys</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>修改<code>/etc/dovecot/conf.d/10-ssl.conf</code>配置文件，<strong>该文件配置 SSL 加密参数</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssl = yes</span></span><br><span class="line"><span class="attr">ssl</span> = required</span><br><span class="line"></span><br><span class="line"><span class="comment"># PEM encoded X.509 SSL/TLS certificate and private key. They&#x27;re opened before</span></span><br><span class="line"><span class="comment"># dropping root privileges, so keep the key file unreadable by anyone but</span></span><br><span class="line"><span class="comment"># root. Included doc/mkcert.sh can be used to easily generate self-signed</span></span><br><span class="line"><span class="comment"># certificate, just make sure to update the domains in dovecot-openssl.cnf</span></span><br><span class="line"></span><br><span class="line"><span class="attr">ssl_cert</span> = &lt;******.cer</span><br><span class="line"><span class="attr">ssl_key</span> = &lt;******.key</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意<code>&lt;</code>不要漏掉了</p>
+</blockquote>
+<ol start="8">
+<li>修改<code>/etc/dovecot/conf.d/15-lda.conf</code>配置文件，<strong>该文件配置特定域的 postmaster 邮箱</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#postmaster_address =</span></span><br><span class="line"><span class="attr">postmaster_address</span> = postmaster@%d</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li>修改<code>conf.d/15-mailboxes.conf</code>配置文件，<strong>该文件配置邮箱内部的目录结构</strong>。</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">namespace inbox &#123;</span><br><span class="line">  mailbox Drafts &#123;</span><br><span class="line">    <span class="attr">auto</span> = create</span><br><span class="line">    <span class="attr">special_use</span> = \Drafts</span><br><span class="line">  &#125;</span><br><span class="line">  mailbox Trash &#123;</span><br><span class="line">    <span class="attr">auto</span> = create</span><br><span class="line">    <span class="attr">special_use</span> = \Trash</span><br><span class="line">  &#125;</span><br><span class="line">  mailbox Sent &#123;</span><br><span class="line">    <span class="attr">auto</span> = create</span><br><span class="line">    <span class="attr">special_use</span> = \Sent</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这个配置文件根据个人对邮件文件夹的管理安排来决定是否修改，默认的邮件管理目录也不错。</p>
+</blockquote>
+<p>至此邮件服务器就已经安装完成了，可以进行正常的收发邮件了。<br>重启postfix服务：<code>systemctl restart postfix</code><br>重启dovecot服务：<code>systemctl restart dovecot</code><br>查看端口监听情况：<code>netstat -lnpt</code></p>
+<h2 id="MUA"><a href="#MUA" class="headerlink" title="MUA"></a>MUA</h2><p>MUA (Mail User Agent) 是邮件用户代理，是为用户收发邮件的服务器。例如Outlook、Foxmail等。<br>常见的 Webmail有：<a target="_blank" rel="noopener" href="https://squirrelmail.org/">squirrelmail</a>, <a target="_blank" rel="noopener" href="https://www.rainloop.net/">Rainloop</a>, <a target="_blank" rel="noopener" href="https://roundcube.net/">Roundcube</a><br>大家想登陆的话，随便找个邮箱客户端，添加账户，配置好传入邮件服务器与传出邮件服务器即可。传入服务器可以填<code>imap.example.org</code>，传出服务器可以填<code>smtp.example.org</code>，如果你之前DNS记录是这样设置的话，如果没有，两个都填<code>mail.example.org</code></p>
+<h1 id="DNS设置"><a href="#DNS设置" class="headerlink" title="DNS设置"></a>DNS设置</h1><p>为了让自己的邮件不被当作垃圾邮件，还需要进行 <strong>SPF 记录</strong>、<strong>DMARC 记录</strong>和 <strong>DKIM 签名</strong>的设置</p>
+<p>PTR记录：这个需要你的服务器提供商支持，简单来说就是把你的IP反向解析到对应的域名，如果你的服务器提供商支持的话，去后台修改rDNS为<code>mail.example.org</code>，或者提交工单</p>
+<p>SPF记录：在DNS中，主机记录填<code>@</code>，新增下面的<strong>TXT记录</strong>即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=spf1 mx:mail.example.org ip4:xxx.xxx.xxx.xxx ~all</span><br></pre></td></tr></table></figure>
+
+<p>DMARC 记录：在DNS中，主机记录填<code>_dmarc</code>，新增下面的<strong>TXT记录</strong>即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=DMARC1;p=reject;rua=dmarc@example.org</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>rua=dmarc@example.org</code>表示当收件方检测到伪造邮件时，收件方须将该伪造信息的报告发送到哪个邮箱地址，所以一开始让你添加一个<code>dmarc@example.org</code>用户，不过你也可以设置为其他的，但是设置为自己的域名邮箱不是更好么(●’◡’●)</p>
+</blockquote>
+<p>DKIM记录：</p>
+<ol>
+<li>安装OpenDKIM: <code>apt install opendkim opendkim-tools</code></li>
+<li>修改<code>/etc/opendkim.conf</code>配置文件，直接改为下面的配置就行，socket端口可以改成你自己喜欢的</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># AutoRestart</span></span><br><span class="line">AutoRestart             Yes</span><br><span class="line">AutoRestartRate         10/1h</span><br><span class="line"></span><br><span class="line"><span class="comment"># Log to syslog</span></span><br><span class="line">Syslog                  yes</span><br><span class="line">UMask                   002</span><br><span class="line">SyslogSuccess           Yes</span><br><span class="line">LogWhy                  Yes</span><br><span class="line">Canonicalization        relaxed/simple</span><br><span class="line">Mode                    sv</span><br><span class="line">Socket                  inet:12321@localhost</span><br><span class="line">PidFile               /var/run/opendkim/opendkim.pid</span><br><span class="line">SignatureAlgorithm      rsa-sha256</span><br><span class="line">OversignHeaders         From</span><br><span class="line">TrustAnchorFile       /usr/share/dns/root.key</span><br><span class="line">UserID                  opendkim:opendkim</span><br><span class="line"></span><br><span class="line">ExternalIgnoreList      refile:/etc/opendkim/TrustedHosts</span><br><span class="line">InternalHosts           refile:/etc/opendkim/TrustedHosts</span><br><span class="line">KeyTable                refile:/etc/opendkim/KeyTable</span><br><span class="line">SigningTable            refile:/etc/opendkim/SigningTable</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改<code>/etc/default/opendkim</code>配置文件，修改socket端口</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">SOCKET</span>=inet:<span class="number">12321</span>@localhost</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>修改<code>/etc/postfix/main.cf</code>配置文件，追加以下内容</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DKIM</span></span><br><span class="line"><span class="attr">milter_protocol</span> = <span class="number">6</span></span><br><span class="line"><span class="attr">milter_default_action</span> = accept</span><br><span class="line"><span class="attr">smtpd_milters</span> = inet:localhost:<span class="number">12321</span></span><br><span class="line"><span class="attr">non_smtpd_milters</span> = inet:localhost:<span class="number">12321</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>当postfix版本为2.6+，milter_protocol&#x3D;6；版本为2.3到2.5，milter_protocol&#x3D;2，其中postfix版本由<code>postconf -d | grep mail_version</code>查看。</p>
+</blockquote>
+<ol start="5">
+<li>修改<code>/etc/opendkim/TrustedHosts</code>配置文件</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1</span><br><span class="line">localhost</span><br><span class="line">192.168.0.1/24</span><br><span class="line"></span><br><span class="line">*.example.org</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>创建目录并创建opendkim所需要的key</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /etc/opendkim/keys</span><br><span class="line">mkdir -p /etc/opendkim/keys/example.org</span><br><span class="line">cd /etc/opendkim/keys/example.org</span><br><span class="line"></span><br><span class="line">opendkim-genkey -s mail –d example.org</span><br><span class="line">chown opendkim:opendkim mail.private</span><br><span class="line"></span><br><span class="line">ll /etc/opendkim/keys/example.org</span><br><span class="line">total 16</span><br><span class="line">drwxr-xr-x 2 root     root     4096 Sep 30 00:15 ./</span><br><span class="line">drwxr-xr-x 3 root     root     4096 Sep 30 00:15 ../</span><br><span class="line">-rw------- 1 opendkim opendkim 1679 Sep 30 00:15 mail.private</span><br><span class="line">-rw------- 1 root     root      499 Sep 30 00:15 mail.txt</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>修改相应配置文件，对应的文件内容如下</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">cat</span> /etc/opendkim/KeyTable</span></span><br><span class="line">mail._domainkey.example.org example.org:mail:/etc/opendkim/keys/example.org/mail.private</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">cat</span> /etc/opendkim/SigningTable</span></span><br><span class="line">*@example.org mail._domainkey.example.org</span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li>新增一条DNS记录，主机记录填<code>mail._domainkey</code>，新增下面的<strong>TXT记录</strong>即可</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v=DKIM1; h=sha256; k=rsa; p=MIIBsrtfhkjnnijksjjoiojjbhgtafghjjooiqgqghkl7/rwdeswfsH3/wdesfef7e8ave/dwesfsBP02nlfeswfserkz8eOxCzrZ7P/iasdxfcgbvhftdrtfdXiT3EhVmKpyBZs0KUyVpasdfsfgthgmgoM7KvtWApTkRZMHTwR29EzN3tf2wKbrjMcb/i8AmfhdsasfcdvdbgfoZd7Osdgsfwdesfgthmjgfdsdfcgbh</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这个值由<code>/etc/opendkim/keys/example.org</code>目录下的mail.txt得到，注意P的值可能是分两行显示的，你自己合为一行。</p>
+</blockquote>
+<p>重启postfix、opendkim服务并测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart postfix</span><br><span class="line">systemctl restart dovecot</span><br><span class="line">systemctl restart opendkim</span><br><span class="line">opendkim-testkey: using default configfile /etc/opendkim.conf</span><br><span class="line">opendkim-testkey: checking key &#x27;mail._domainkey.example.org&#x27;</span><br><span class="line">opendkim-testkey: key secure</span><br><span class="line">opendkim-testkey: key OK</span><br></pre></td></tr></table></figure>
+
+<h1 id="发件测试"><a href="#发件测试" class="headerlink" title="发件测试"></a>发件测试</h1><p><a target="_blank" rel="noopener" href="https://www.mail-tester.com/">Newsletters spam</a>，至于这个得分，由于受 IP 地址可能被拉黑的影响，因此各人的分数有可能不同。如果有 8 分以上的话发出去的邮件基本上就不会被拒收，建议用谷歌邮箱或者163邮箱测试收发。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
+<li><p>日志文件路径是<code>/var/log/mail.log</code>，如果postfix日志不在<code>/var/log/mail.log</code>中  </p>
+<blockquote>
+<p>您(或您的提供商)似乎更改了您的syslog工具配置。使用普通的syslogd而不是rsyslogd是非常有可能的，但是你可以期望事情与你的期望不同。通过安装<code>apt-get install rsyslog</code>，日志文件重新出现。</p>
+</blockquote>
+</li>
+<li><p><code>fatal: no SASL authentication mechanisms</code><br>解决办法：<code>ln -s /usr/local/lib/sasl2 /usr/lib/sasl2</code>，自己编译安装<a target="_blank" rel="noopener" href="https://www.cyrusimap.org/sasl/sasl/installation.html">Cyrus SASL</a>，具体参考<a target="_blank" rel="noopener" href="https://www.netkiller.cn/postfix/x684.html">Cyrus-SASL</a></p>
+</li>
+<li><p>测试<code>opendkim-testkey -d example.org -s mail -vvv</code>出现<code>opendkim-testkey: key not secure</code><br>没有启用<code>DNSSEC</code>，去DNS服务商那里开启即可</p>
+</li>
+<li><p>发信有时成功，有时被退回。<br>建议查看退回邮件写的退回原因，主要就是PTR，SPF，DMARC 和 DKIM 这几块。有的VPS提供商只支持IPv4的rDNS，不支持IPv6，可以设置postfix的<code>inet_protocols = ipv4</code>，经过测试发信谷歌邮箱只要PTR不符合就会拒收。</p>
+</li>
+</ol>
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://www.linode.com/docs/guides/email-with-postfix-dovecot-and-mysql/">Configure an Email Server with Postfix, Dovecot, and MySQL on Debian and Ubuntu</a><br><a target="_blank" rel="noopener" href="http://lomu.me/post/SPF-DKIM-DMARC-PTR">邮件服务器添加SPF、DKIM、DMARC、PTR提高送达率</a></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>

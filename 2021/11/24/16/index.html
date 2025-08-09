@@ -1,0 +1,192 @@
+
+
+  <!DOCTYPE html>
+  <html lang="zh">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="renderer" content="webkit">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="description" content=记录美好之物 >
+  <meta name="keywords" content=hexo,blog >
+
+  <head>
+    <title>
+      基于VuePress进行项目搭建 [ Yuki博客 ]
+    </title>
+  <meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+
+    <link rel="stylesheet" href="/css/header.css">
+<div class="header">
+  <div class="logo">
+    <span class="pull-left">
+      <a id="site-name" href="/">
+        Yuki&#39;s blog
+      </a>
+    </span>
+  </div>
+  <ul class="nav-list">
+    
+      <li>
+        <a href="/">
+          首页
+        </a>
+      </li>
+      
+      <li>
+        <a href="/about">
+          关于
+        </a>
+      </li>
+      
+  </ul>
+</div>
+
+      <!--<link rel="stylesheet" href="/css/top-header.css">
+<div id="top-bar" class="fixed">
+
+  <a class="goto-top" href="#"></a>
+  <ul class="bar-list bar-list-1">
+    
+      <li>
+        <p>
+          <a href="/">
+            <text class="bar-text bar-p1">
+              首页
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+      <li>
+        <p>
+          <a href="/about">
+            <text class="bar-text bar-p1">
+              关于
+            </text>
+            <text class="bar-text bar-p2"></text>
+          </a>
+          <text class="bar-p3">/</text>
+        </p>
+      </li>
+      
+  </ul>
+</div>-->
+
+        <div id="content-outer">
+          <div class="content-inner">
+            <link rel="stylesheet" href="/css/post.css">
+<div class="posts">
+  <a href="/index.html"><i class="fa fa-home
+replay-btn" aria-hidden="true"></i></a>
+  <div class="post-title">
+    <p>
+      基于VuePress进行项目搭建
+    </p>
+    <hr>
+  </div>
+  <div class="post-content">
+    <p>　　最近想搭建一个手册类的网站，就在网络中寻找手册模板，经过调研发现 VuePress 是一个受到诸多好评的前端框架，可以帮助我们快速搭建一个以内容为中心的静态网站。自己实际使用起来也觉得体验很舒适，开箱即用，上手很快。</p>
+<p>　　<a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/">VuePress</a>是由 Vue 驱动的静态网站生成器，用户只需要关注文档内容的编写，非常适合编写技术文档以及个人博客。</p>
+<p>　　下面记录一下<a target="_blank" rel="noopener" href="https://life.echocolate.xyz/">个人站点 Life</a> 的搭建步骤：</p>
+<h2 id="VuePress-的安装"><a href="#VuePress-的安装" class="headerlink" title="VuePress 的安装"></a>VuePress 的安装</h2><ol>
+<li>安装<a target="_blank" rel="noopener" href="https://nodejs.org/en/">Node.js</a>，需要版本 &gt;&#x3D; 8.6，有以下 3 种安装方式<ul>
+<li>直接使用已编译好的包</li>
+<li>源码安装</li>
+<li>Ubuntu 通过<code>apt-get</code>命令安装</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">直接使用已编译好的包</span></span><br><span class="line">wget https://nodejs.org/dist/v18.13.0/node-v18.13.0-linux-x64.tar.xz</span><br><span class="line">tar xf node-v18.13.0-linux-x64.tar.xz &amp;&amp; rm node-v18.13.0-linux-x64.tar.xz</span><br><span class="line">cd node-v18.13.0-linux-x64/</span><br><span class="line">./bin/node -v</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">源码安装</span></span><br><span class="line">wget https://nodejs.org/dist/v18.13.0/node-v18.13.0.tar.gz &amp;&amp; tar zxf node-v18.13.0.tar.gz</span><br><span class="line">cd node-*</span><br><span class="line">sudo ./configure</span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">命令行安装</span></span><br><span class="line">sudo apt-get install nodejs</span><br><span class="line">sudo apt-get install npm</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>安装 yarn 包管理器<code>sudo npm install -g yarn</code></p>
+</li>
+<li><p>新建工程目录并初始化项目，安装本地依赖</p>
+</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir project &amp;&amp; cd project</span><br><span class="line">yarn init # npm init</span><br><span class="line">yarn add -D vuepress # npm install -D vuepress</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>创建第一篇文档</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir docs &amp;&amp; echo &#x27;# Hello VuePress&#x27; &gt; docs/README.md</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>在 package.json 中添加一些 scripts</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;docs:dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress dev docs&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;docs:build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;vuepress build docs&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>启动服务器</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn docs:dev</span><br></pre></td></tr></table></figure>
+
+<p>　　以上就搭建好了一个简单的 VuePress 文档，下面我们可以继续进行界面美化，个人觉得 <a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/theme/">VuePress 默认主题</a>足够简约，同时也非常适合学习主题的相关配置。<br>　　下面给出一部分主题配置，建议结合官方说明文档一起学习。</p>
+<h2 id="基于默认主题的配置"><a href="#基于默认主题的配置" class="headerlink" title="基于默认主题的配置"></a>基于默认主题的配置</h2><p>　　注意<strong>当前目录为<code>docs</code></strong>。</p>
+<ol>
+<li>使用示例页面，修改<code>README.md</code>如下</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">home: true</span><br><span class="line">heroImage: /logo.jpg</span><br><span class="line">actionText: 快速上手 →</span><br><span class="line">actionLink: /zh/guide/</span><br><span class="line">features:</span><br><span class="line"> - title: 简洁至上</span><br><span class="line">  details: 以 Markdown 为中心的项目结构，以最少的配置帮助你专注于写作。</span><br><span class="line"> - title: Vue驱动</span><br><span class="line">  details: 享受 Vue + webpack 的开发体验，在 Markdown 中使用 Vue 组件，同时可以使用 Vue 来开发自定义主题。</span><br><span class="line"> - title: 高性能</span><br><span class="line">  details: VuePress 为每个页面预渲染生成静态的 HTML，同时在页面被加载的时候，将作为 SPA 运行。</span><br><span class="line">footer: MIT Licensed | Copyright © 2018-present Evan You</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>创建配置文件<code>mkdir .vuepress/ &amp;&amp; cat /dev/null &gt; .vuepress/config.js</code></li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">    <span class="attr">title</span>: <span class="string">&#x27;VuePress&#x27;</span>, <span class="comment">// 网站的标题</span></span><br><span class="line">    <span class="attr">description</span>: <span class="string">&#x27;Hello VuePress&#x27;</span>, <span class="comment">// 网站的描述，它将会以 &lt;meta&gt; 标签渲染到当前页面的 HTML 中</span></span><br><span class="line">    <span class="attr">head</span>: [</span><br><span class="line">        [<span class="string">&#x27;link&#x27;</span>, &#123; <span class="attr">rel</span>: <span class="string">&#x27;icon&#x27;</span>, <span class="attr">href</span>: <span class="string">&#x27;/favicon.ico&#x27;</span> &#125;] <span class="comment">// 需要被注入到当前页面的 HTML &lt;head&gt; 中的标签</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">themeConfig</span>: &#123;</span><br><span class="line">        <span class="attr">logo</span>: <span class="string">&#x27;/favicon.ico&#x27;</span>, <span class="comment">// 配置导航栏logo(themeConfig.logo)</span></span><br><span class="line">        <span class="attr">nav</span>: [</span><br><span class="line">          <span class="comment">// 可指定链接跳转模式：默认target: &#x27;_blank&#x27;新窗口打开，_self当前窗口打开</span></span><br><span class="line">          &#123; <span class="attr">text</span>: <span class="string">&#x27;Home&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/&#x27;</span> &#125;,</span><br><span class="line">          &#123; <span class="attr">text</span>: <span class="string">&#x27;百度&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;https://www.baidu.com&#x27;</span> &#125;,</span><br><span class="line">          &#123; <span class="attr">text</span>: <span class="string">&#x27;CSDN&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;https://blog.csdn.net&#x27;</span>, <span class="attr">target</span>: <span class="string">&#x27;_blank&#x27;</span> &#125;,</span><br><span class="line">          &#123; <span class="attr">text</span>: <span class="string">&#x27;豆瓣&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;https://movie.douban.com&#x27;</span>, <span class="attr">target</span>: <span class="string">&#x27;_self&#x27;</span>, <span class="attr">rel</span>: <span class="string">&#x27;&#x27;</span> &#125;,</span><br><span class="line">          <span class="comment">// 支持嵌套,形成下拉式的导航菜单</span></span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">text</span>: <span class="string">&#x27;语言&#x27;</span>,</span><br><span class="line">            <span class="attr">ariaLabel</span>: <span class="string">&#x27;Language Menu&#x27;</span>,</span><br><span class="line">            <span class="attr">items</span>: [</span><br><span class="line">              &#123; <span class="attr">text</span>: <span class="string">&#x27;中文&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/language/chinese/&#x27;</span> &#125;,</span><br><span class="line">              &#123; <span class="attr">text</span>: <span class="string">&#x27;英文&#x27;</span>, <span class="attr">link</span>: <span class="string">&#x27;/language/english/&#x27;</span> &#125;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">sidebar</span>: <span class="string">&#x27;auto&#x27;</span> <span class="comment">// 全局设置自动生成侧边栏</span></span><br><span class="line">      &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　下面就是可选步骤，主要包括使用主题以及网站发布。</p>
+<h2 id="安装社区主题"><a href="#安装社区主题" class="headerlink" title="安装社区主题"></a>安装社区主题</h2><p>　　以<a target="_blank" rel="noopener" href="https://vuepress-theme-reco.recoluan.com/"><code>vuepress-theme-reco</code>主题</a>为例，该主题几乎继承 VuePress 默认主题的一切功能，因此该主题的配置也很简单。</p>
+<ol>
+<li>主题安装</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add vuepress-theme-reco # npm install vuepress-theme-reco --save-dev</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用主题<br>修改<code>.vuepress/config.js</code>配置文件</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">theme</span>: <span class="string">&#x27;reco&#x27;</span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<h2 id="部署项目"><a href="#部署项目" class="headerlink" title="部署项目"></a>部署项目</h2><p>　　项目可以部署到个人服务器上，也可以使用 GitHub Pages 进行部署。我们通过命令行 <code>npm run docs:build</code> 生成静态文件，然后将生成好的静态文件上传到服务器上或者 Github 的 repo 上即可。</p>
+<h2 id="Q-A"><a href="#Q-A" class="headerlink" title="Q&amp;A"></a>Q&amp;A</h2><p>Q1. npm运行报错<code>Error: ENOSPC: System limit for number of file watchers reached</code><br>A: 文件监视程序的系统产生了限制，达到了默认的上限，需要增加限额，建议按需设置，一般而言设为 1 会占用 5k 的内存空间。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl fs.inotify.max_user_watches = 524288</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">永久修改，需要配置 /etc/sysctl.conf</span></span><br><span class="line">echo fs.inotify.max_user_watches = 524288 | sudo tee -a /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+
+<p>Q2. Vue 报错<code>error:0308010C:digital envelope routines::unsupported</code><br>A: node.js V17版本后使用了最近发布的OpenSSL3.0, 而OpenSSL3.0对允许算法和密钥大小增加了严格的限制。通过修改 package.json 中的 scripts</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;docs:dev&quot;</span><span class="punctuation">:</span> <span class="string">&quot;export NODE_OPTIONS=--openssl-legacy-provider &amp;&amp; vuepress dev docs&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;docs:build&quot;</span><span class="punctuation">:</span> <span class="string">&quot;export NODE_OPTIONS=--openssl-legacy-provider &amp;&amp; vuepress build docs&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://vuepress.vuejs.org/zh/guide/">VuePress</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xiaoxianer321/article/details/119548202">vuepress使用简介及个人博客搭建</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/zjjxxh/article/details/127173968">Vue 报错</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38106692/article/details/101512232">Linux 踩坑系列</a></p>
+
+  </div>
+  
+</div>
+          </div>
+        </div>
+
+        <link rel="stylesheet" href="/css/footer.css">
+<div class="bottom-outer">
+  <div class="copyright">©2021 - <span id="year"></span> By Echocolate</div>
+  <div class="framework-info">
+    <span>Power by</span>
+    <a class="a1" target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>
+    <span class="footer-separator">|</span>
+    <span>Theme by</span>
+    <a class="a2" target="_blank" rel="noopener" href="https://github.com/redhat123456/hexo-theme-MiHoYo">MiHoYo</a>
+  </div>
+</div>
+
+<script>
+  document.getElementById("year").innerHTML = new Date().getFullYear();
+</script>
+
+          
+            <!-- scripts list from theme config.yml -->
+            
+              <script src="/js/MiHoYo.js"></script>
+              
+                
+
+  </body>
+
+  </html>
